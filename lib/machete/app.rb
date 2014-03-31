@@ -13,7 +13,7 @@ module Machete
 
     def push
       Dir.chdir("test_applications/#{app_name}")
-      @output = run_cmd("cf push #{app_name}")
+      @output = run_cmd("cf push #{app_name} -b ruby-integration-test")
     end
 
     def homepage_html
