@@ -15,7 +15,7 @@ module Machete
     def push
       Dir.chdir("test_applications/#{app_name}")
       command = "cf push #{app_name} -b ruby-integration-test"
-      command = command + "-c '#{cmd}'" unless @cmd.empty?
+      command = command + " -c '#{@cmd}'" unless @cmd.empty?
       @output = run_cmd(command)
     end
 
