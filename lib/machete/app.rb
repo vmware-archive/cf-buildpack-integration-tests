@@ -7,13 +7,16 @@ module Machete
 
     attr_reader :output, :app_name
 
-    def initialize(app_name)
+    def initialize(app_name, cmd='')
       @app_name = app_name
+      @cmd = cmd
     end
 
     def push
       Dir.chdir("test_applications/#{app_name}")
-      @output = run_cmd("cf push #{app_name} -b ruby-integration-test")
+      command = "cf push #{app_name} -b ruby-integration-test"
+      command = command + "-c '#{cmd}'" unless @cmd.empty?
+      @output = run_cmd(command)
     end
 
     def homepage_html
