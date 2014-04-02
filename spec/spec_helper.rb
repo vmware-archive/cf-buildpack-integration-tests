@@ -12,5 +12,12 @@ RSpec.configure do |config|
   config.before do
     setup_buildpack
   end
-end
 
+  config.before(:each) do
+    @pwd = Dir.pwd
+  end
+
+  config.after(:each) do
+    Dir.chdir @pwd
+  end
+end
