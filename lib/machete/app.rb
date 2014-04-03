@@ -12,8 +12,13 @@ module Machete
       @cmd = cmd
     end
 
-    def push
+    def push(with_db)
       Dir.chdir("test_applications/#{app_name}")
+      run_cmd("cf delete -f #{app_name}")
+      if with_db
+        run_cmd("cf push #{app_name} --no-start")
+        run_cmd("cf bind-service #{app_name} lilelephant")
+      end
       command = "cf push #{app_name} -b ruby-integration-test"
       command = command + " -c '#{@cmd}'" unless @cmd.empty?
       @output = run_cmd(command)
