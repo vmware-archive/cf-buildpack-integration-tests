@@ -7,10 +7,8 @@ require 'machete'
 require 'helpers/upstream_helper'
 
 RSpec.configure do |config|
-  config.include UpstreamHelper
-
-  config.before do
-    setup_buildpack
+  config.before(:suite) do
+    UpstreamHelper.setup_buildpack
   end
 
   config.before(:each) do

@@ -1,5 +1,6 @@
 module UpstreamHelper
-  def setup_buildpack(buildpack_name = "ruby-integration-test")
+
+  def self.setup_buildpack(buildpack_name = "ruby-integration-test")
     online_var = if buildpack_mode == :online
                    "ONLINE=1"
                  else
@@ -24,21 +25,15 @@ module UpstreamHelper
     end
   end
 
-  def buildpack_mode
-    unless @buildpack_mode
-      @buildpack_mode = (ENV['BUILDPACK_MODE'] || :online).downcase.to_sym
-      puts "** WARNING ** BUILDPACK_MODE not specified, defaulting to '#{@buildpack_mode}'" unless ENV['BUILDPACK_MODE']
-    end
-
-    @buildpack_mode
+  def self.buildpack_mode
+    buildpack_mode = (ENV['BUILDPACK_MODE'] || :online).downcase.to_sym
+    puts "** WARNING ** BUILDPACK_MODE not specified, defaulting to '#{buildpack_mode}'" unless ENV['BUILDPACK_MODE']
+    buildpack_mode
   end
 
-  def buildpack_path
-    unless @buildpack_path
-      @buildpack_path = ENV['BUILDPACK_PATH'] || "../heroku-buildpack-ruby-cf"
-      puts "** BUILDPACK_PATH not specified, defaulting to '#{buildpack_path}'" unless ENV['BUILDPACK_PATH']
-    end
-
-    @buildpack_path
+  def self.buildpack_path
+    buildpack_path = ENV['BUILDPACK_PATH'] || "../heroku-buildpack-ruby-cf"
+    puts "** BUILDPACK_PATH not specified, defaulting to '#{buildpack_path}'" unless ENV['BUILDPACK_PATH']
+    buildpack_path
   end
 end
