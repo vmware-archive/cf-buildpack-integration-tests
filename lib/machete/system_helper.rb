@@ -1,8 +1,12 @@
-module SystemHelper
-  def run_cmd(cmd)
-    puts "$ #{cmd}" if ENV['PRINT_COMMANDS']
-    result = `#{cmd}`
-    puts result if ENV['PRINT_COMMANDS']
-    result
+module Machete
+  module SystemHelper
+    include Machete::Logger
+
+    def run_cmd(cmd)
+      logger.info "$ #{cmd}"
+      result = `#{cmd}`
+      logger.info result
+      result
+    end
   end
 end

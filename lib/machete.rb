@@ -1,3 +1,4 @@
+require 'machete/logger'
 require 'machete/app'
 
 module Machete

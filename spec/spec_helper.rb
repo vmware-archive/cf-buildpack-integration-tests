@@ -6,6 +6,8 @@ $: << File.expand_path("../../lib", __FILE__)
 require 'machete'
 require 'helpers/upstream_helper'
 
+Machete::Logger.log_to('machete.log')
+
 RSpec.configure do |config|
   config.before(:suite) do
     UpstreamHelper.setup_buildpack

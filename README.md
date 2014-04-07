@@ -10,7 +10,6 @@ Path to test subject:
 
     BUILDPACK_PATH ../heroku-buildpack-ruby
 
-Verbose shell command logging (for debug):
+## Logging
 
-    PRINT_COMMANDS=1
-
+Errors in the Machete library (usually shell errors) logged to _./machete.log_
