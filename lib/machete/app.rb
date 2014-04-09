@@ -8,20 +8,23 @@ module Machete
 
     attr_reader :output, :app_name
 
-    def initialize(app_name, language, cmd='')
+    def initialize(app_name, language, opts={})
       @app_name = app_name
       @language = language
-      @cmd = cmd
+			@cmd = opts.fetch(:cmd,'')
+			@with_pg = opts.fetch(:with_pg, false)
     end
 
-    def push(with_db)
+    def push()
       Dir.chdir("test_applications/#{@language}/#{app_name}")
       run_cmd("cf delete -f #{app_name}")
-      if with_db
-        run_cmd("cf push #{app_name} --no-start")
+      if @with_pg
+        run_cmd("cf push #{app_name} --no-start -b ruby-integration-test")
         run_cmd("cf bind-service #{app_name} lilelephant")
+      	command = "cf start #{app_name} "
+			else
+	      command = "cf push #{app_name} -b ruby-integration-test"
       end
-      command = "cf push #{app_name} -b ruby-integration-test"
       @output = run_cmd(command)
     end
 
@@ -32,5 +35,6 @@ module Machete
     def url
       run_cmd("cf app #{app_name} | grep url").split(' ').last
     end
+
   end
 end
