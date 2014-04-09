@@ -32,7 +32,7 @@ module UpstreamHelper
   end
 
   def self.buildpack_path
-    buildpack_path = ENV['BUILDPACK_PATH'] || "../heroku-buildpack-ruby-cf"
+    buildpack_path = ENV['BUILDPACK_PATH'] || "../buildpacks/heroku-buildpack-ruby-cf"
     puts "** BUILDPACK_PATH not specified, defaulting to '#{buildpack_path}'" unless ENV['BUILDPACK_PATH']
     buildpack_path
   end

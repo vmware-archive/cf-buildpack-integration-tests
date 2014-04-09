@@ -1,5 +1,6 @@
 require 'httparty'
 require 'machete/system_helper'
+require 'pry'
 
 module Machete
   class App
@@ -7,13 +8,14 @@ module Machete
 
     attr_reader :output, :app_name
 
-    def initialize(app_name, cmd='')
+    def initialize(app_name, language, cmd='')
       @app_name = app_name
+      @language = language
       @cmd = cmd
     end
 
     def push(with_db)
-      Dir.chdir("test_applications/#{app_name}")
+      Dir.chdir("test_applications/#{@language}/#{app_name}")
       run_cmd("cf delete -f #{app_name}")
       if with_db
         run_cmd("cf push #{app_name} --no-start")
