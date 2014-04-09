@@ -10,7 +10,9 @@ Machete::Logger.log_to('machete.log')
 
 RSpec.configure do |config|
   config.before(:suite) do
-    UpstreamHelper.setup_buildpack
+    upstream_helper = UpstreamHelper.new
+    upstream_helper.setup_language_buildpack :ruby
+    upstream_helper.setup_language_buildpack :go
   end
 
   config.before(:each) do

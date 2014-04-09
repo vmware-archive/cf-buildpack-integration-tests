@@ -6,9 +6,13 @@ Online and offline mode (default: online):
 
     BUILDPACK_MODE=[online|offline]
 
-Path to test subject:
+Path to buildpacks folder:
+    BUILDPACK_ROOT ../buildpacks
 
-    BUILDPACK_PATH ../heroku-buildpack-ruby
+This root needs to contain the following buildpacks:
+
+* cf-buildpack-go
+* cf-buildpack-ruby
 
 ## Logging
 

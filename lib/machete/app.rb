@@ -11,19 +11,19 @@ module Machete
     def initialize(app_name, language, opts={})
       @app_name = app_name
       @language = language
-			@cmd = opts.fetch(:cmd,'')
-			@with_pg = opts.fetch(:with_pg, false)
+      @cmd = opts.fetch(:cmd, '')
+      @with_pg = opts.fetch(:with_pg, false)
     end
 
     def push()
-      Dir.chdir("test_applications/#{@language}/#{app_name}")
+      Dir.chdir(app_path)
       run_cmd("cf delete -f #{app_name}")
       if @with_pg
-        run_cmd("cf push #{app_name} --no-start -b ruby-integration-test")
+        run_cmd("cf push #{app_name} --no-start -b #{buildpack_name}")
         run_cmd("cf bind-service #{app_name} lilelephant")
-      	command = "cf start #{app_name} "
-			else
-	      command = "cf push #{app_name} -b ruby-integration-test"
+        command = "cf start #{app_name} "
+      else
+        command = "cf push #{app_name} -b #{buildpack_name}"
       end
       @output = run_cmd(command)
     end
@@ -36,5 +36,18 @@ module Machete
       run_cmd("cf app #{app_name} | grep url").split(' ').last
     end
 
+    private
+
+    def buildpack_name
+      "#{@language}-test-buildpack"
+    end
+
+    def app_path
+      if @language == :go
+        "test_applications/go/src/#{app_name}"
+      else
+        "test_applications/ruby/#{app_name}"
+      end
+    end
   end
 end
