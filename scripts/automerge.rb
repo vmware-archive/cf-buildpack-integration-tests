@@ -31,6 +31,7 @@ begin
   `git remote add heroku-github https://github.com/heroku/heroku-buildpack-ruby`
   `git fetch heroku-github`
   output = `git merge heroku-github/master`
+  puts output
   Dir.chdir("../../..")
 
   if output.match(/up-to-date/)
