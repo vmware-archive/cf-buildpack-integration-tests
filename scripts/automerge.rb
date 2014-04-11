@@ -12,7 +12,7 @@ def push_merge
 end
 
 def run_specs
-  if system "BUILDPACK_ROOT=tmp/buildpacks bundle exec rspec spec/integration/ruby"
+  if system "BUILDPACK_ROOT=tmp/buildpacks bundle exec rspec spec/integration/ruby && BUILDPACK_ROOT=tmp/buildpacks BUILDPACK_MODE=offline bundle exec rspec spec/integration/ruby"
     push_merge
   else
     exit 1
