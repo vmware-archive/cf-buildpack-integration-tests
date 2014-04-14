@@ -45,6 +45,8 @@ begin
   end
 rescue StandardError => e
   puts e
+  puts "---> Backtrace"
+  puts e.backtrace.join("\n")
   puts "Something went wrong during auto merge, investigate"
   exit 1
 end
