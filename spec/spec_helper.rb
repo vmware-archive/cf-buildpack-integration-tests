@@ -13,6 +13,7 @@ RSpec.configure do |config|
     upstream_helper = UpstreamHelper.new
     upstream_helper.setup_language_buildpack :ruby
     upstream_helper.setup_language_buildpack :go
+    upstream_helper.setup_language_buildpack :nodejs
   end
 
   config.before(:each) do
