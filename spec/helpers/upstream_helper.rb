@@ -7,12 +7,12 @@ class UpstreamHelper
                  end
 
     result = Bundler.with_clean_env do
-      %x(
+      puts %x(
         cd #{File.expand_path("cf-buildpack-#{language}", buildpack_root)} &&
         rm -f #{language}_buildpack.zip &&
         bundle &&
         #{online_var} bundle exec rake package &&
-        (cf create-buildpack #{language}-test-buildpack #{language}_buildpack.zip 1 --enable ||
+        (cf create-buildpack #{language}-test-buildpack #{language}_buildpack.zip 1 --enable &&
         cf update-buildpack #{language}-test-buildpack -p #{language}_buildpack.zip --enable) &&
         rm #{language}_buildpack.zip
       )
