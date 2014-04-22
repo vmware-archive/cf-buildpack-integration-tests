@@ -20,14 +20,14 @@ module Machete
       run_cmd("cf delete -f #{app_name}")
       if @with_pg
         command = "cf push #{app_name} -b #{buildpack_name}"
-        command += " -c \"#{@cmd}\"" if @cmd
+        command += " -c '#{@cmd}'" if @cmd
         run_cmd("#{command} --no-start")
         run_cmd("cf bind-service #{app_name} lilelephant")
         # command = "cf start #{app_name} "
         run_cmd(command)
       else
         command = "cf push #{app_name} -b #{buildpack_name}"
-        command += " -c \"#{@cmd}\"" if @cmd
+        command += " -c '#{@cmd}'" if @cmd
       end
       @output = run_cmd(command)
     end
