@@ -8,12 +8,26 @@ require 'helpers/upstream_helper'
 
 Machete::Logger.log_to('machete.log')
 
+
+module CloudFoundry
+  def self.upstream_helper
+    @upstream_helper ||= UpstreamHelper.new
+  end
+end
+
 RSpec.configure do |config|
-  config.before(:suite) do
-    upstream_helper = UpstreamHelper.new
-    upstream_helper.setup_language_buildpack :ruby
-    upstream_helper.setup_language_buildpack :go
-    upstream_helper.setup_language_buildpack :nodejs
+  config.treat_symbols_as_metadata_keys_with_true_values = true
+
+  config.before(:each, :ruby_buildpack) do
+    CloudFoundry.upstream_helper.setup_language_buildpack :ruby
+  end
+
+  config.before(:each, :go_buildpack) do
+    CloudFoundry.upstream_helper.setup_language_buildpack :go
+  end
+
+  config.before(:each, :node_buildpack) do
+    CloudFoundry.upstream_helper.setup_language_buildpack :nodejs
   end
 
   config.before(:each) do

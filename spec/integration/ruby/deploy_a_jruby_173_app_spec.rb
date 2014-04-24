@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe 'deploying a jruby 1.7.3 application' do
+describe 'deploying a jruby 1.7.3 application', :ruby_buildpack do
   xit "deploys a jruby 1.7.3 (legacy jdk) properly" do
     Machete.deploy_app("ruby_193_jruby_173", :ruby) do |app|
       expect(app.output).to match("Installing JVM: openjdk1.7.0_25")
