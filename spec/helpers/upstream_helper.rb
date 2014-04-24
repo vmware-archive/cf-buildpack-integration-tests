@@ -64,4 +64,15 @@ class UpstreamHelper
     puts "** BUILDPACK_ROOT not specified, defaulting to '#{path}'" unless ENV['BUILDPACK_ROOT']
     path
   end
+
+  def check_test_dependencies
+    services = `cf services`
+
+    unless services =~ /^lilelephant/
+      puts "**** Could not find 'lilelephant' service in current cf space"
+      puts "Output was: "
+      puts services
+      exit(1)
+    end
+  end
 end

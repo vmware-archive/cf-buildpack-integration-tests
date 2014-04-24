@@ -18,6 +18,10 @@ end
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
 
+  config.before(:suite) do
+    CloudFoundry.upstream_helper.check_test_dependencies
+  end
+
   config.before(:each, :ruby_buildpack) do
     CloudFoundry.upstream_helper.setup_language_buildpack :ruby
   end
