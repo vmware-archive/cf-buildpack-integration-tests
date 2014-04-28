@@ -1,3 +1,5 @@
+require 'scripts_helpers'
+
 class UpstreamHelper
 
   attr_reader :existing_buildpacks
@@ -6,9 +8,7 @@ class UpstreamHelper
     @existing_buildpacks = {}
   end
 
-
   def setup_language_buildpack(language)
-
     return if has_buildpack?(language)
 
     online_var = if buildpack_mode == :online
@@ -51,7 +51,7 @@ class UpstreamHelper
 
   def get_buildpack_mode
     mode = (ENV['BUILDPACK_MODE'] || :online).downcase.to_sym
-    puts "** WARNING ** BUILDPACK_MODE not specified, defaulting to '#{mode}'" unless ENV['BUILDPACK_MODE']
+    info('BUILDPACK_MODE not specified.', "Defaulting to '#{mode}'") unless ENV['BUILDPACK_MODE']
     mode
   end
 
@@ -61,7 +61,7 @@ class UpstreamHelper
 
   def get_buildpack_root
     path = ENV['BUILDPACK_ROOT'] || "../buildpacks"
-    puts "** BUILDPACK_ROOT not specified, defaulting to '#{path}'" unless ENV['BUILDPACK_ROOT']
+    info('BUILDPACK_ROOT not specified.', "Defaulting to '#{path}'") unless ENV['BUILDPACK_ROOT']
     path
   end
 
@@ -69,9 +69,11 @@ class UpstreamHelper
     services = `cf services`
 
     unless services =~ /^lilelephant/
-      puts "**** Could not find 'lilelephant' service in current cf space"
-      puts "Output was: "
-      puts services
+      warning_banner(
+          "Could not find 'lilelephant' service in current cf space",
+          'Output was: ',
+          services
+      )
       exit(1)
     end
   end
