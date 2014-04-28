@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'rspec/core'
 
 $: << File.expand_path("..", __FILE__)
