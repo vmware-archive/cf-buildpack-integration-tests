@@ -1,3 +1,9 @@
+def action(*actions)
+  actions.each do |action|
+    puts "-----> #{action}"
+  end
+end
+
 def warning_banner(*messages)
   warn('*' * 80)
   warn('**** WARNING')

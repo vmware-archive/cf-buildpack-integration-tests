@@ -11,6 +11,8 @@ class UpstreamHelper
   def setup_language_buildpack(language)
     return if has_buildpack?(language)
 
+    action("Installing buildpack for: #{language}")
+
     online_var = if buildpack_mode == :online
                    "ONLINE=1"
                  else
