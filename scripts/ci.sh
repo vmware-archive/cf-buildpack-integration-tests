@@ -1,5 +1,7 @@
 #!/bin/bash -l
-curl http://go-cli.s3.amazonaws.com/master/cf-linux-amd64.tgz | tar xzv
+
+uname_lower=$(echo `uname` | awk '{print tolower($0)}')
+curl http://go-cli.s3.amazonaws.com/master/cf-$uname_lower-amd64.tgz | tar xzv
 mkdir -p ./bin
 mv cf bin/
 export PATH=/Users/pivotal/.rvm/bin:/var/vcap/packages/ruby/bin:$PWD/bin:$PATH
