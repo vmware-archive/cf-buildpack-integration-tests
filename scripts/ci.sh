@@ -1,6 +1,6 @@
 #!/bin/bash -l
 export PATH=/Users/pivotal/.rvm/bin:/var/vcap/packages/ruby/bin:$PATH
-# rvm use ruby-2.0.0-p451
+rvm use ruby-2.0.0-p451
 bundle install
 rm -rf tmp_buildpacks
 mkdir tmp_buildpacks
