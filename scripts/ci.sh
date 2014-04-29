@@ -1,5 +1,8 @@
 #!/bin/bash -l
-export PATH=/Users/pivotal/.rvm/bin:/var/vcap/packages/ruby/bin:$PATH
+curl http://go-cli.s3.amazonaws.com/master/cf-linux-amd64.tgz | tar xzv
+mkdir -p ./bin
+mv cf bin/
+export PATH=/Users/pivotal/.rvm/bin:/var/vcap/packages/ruby/bin:$PWD/bin:$PATH
 rvm use ruby-2.0.0-p451
 bundle install
 rm -rf tmp_buildpacks

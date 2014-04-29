@@ -4,3 +4,4 @@ machete.log
 .DS_Store
 *.log
 **/**/vendor/bundle
+bin/
