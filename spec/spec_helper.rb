@@ -9,7 +9,6 @@ require 'helpers/upstream_helper'
 
 Machete::Logger.log_to('machete.log')
 
-
 module CloudFoundry
   def self.upstream_helper
     @upstream_helper ||= UpstreamHelper.new
