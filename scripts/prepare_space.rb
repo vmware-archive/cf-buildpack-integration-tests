@@ -11,15 +11,17 @@ action('Creating space')
 `cf create-space integration -o pivotal`
 `cf target -o pivotal -s integration`
 
-# puts_action('Adding Service Broker')
-#
-# unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
-#   warning_banner(
-#       'You must provide AppDirect credentials:',
-#       'APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
-#   )
-# end
-#
+action('Adding Service Broker')
+
+unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
+  warning_banner(
+      'You must provide AppDirect credentials:',
+      'APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
+  )
+end
+
+`cf curl /v2/service_brokers`
+
 # `cf create-service-broker appdirect #{ENV['APPDIRECT_USERNAME']} #{ENV['APPDIRECT_PASSWORD']} #{ENV['APPDIRECT_URL']}`
 #
 #
