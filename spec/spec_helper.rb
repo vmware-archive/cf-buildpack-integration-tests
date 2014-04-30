@@ -20,6 +20,11 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     CloudFoundry.upstream_helper.check_test_dependencies
+    CloudFoundry.upstream_helper.setup_firewall
+  end
+
+  config.after(:suite) do
+    CloudFoundry.upstream_helper.teardown_firewall
   end
 
   config.before(:each, :ruby_buildpack) do

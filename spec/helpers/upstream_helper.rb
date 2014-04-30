@@ -51,6 +51,14 @@ class UpstreamHelper
     @buildpack_mode ||= get_buildpack_mode
   end
 
+  def offline?
+    !online?
+  end
+
+  def online?
+    get_buildpack_mode == :online
+  end
+
   def get_buildpack_mode
     mode = (ENV['BUILDPACK_MODE'] || :online).downcase.to_sym
     info('BUILDPACK_MODE not specified.', "Defaulting to '#{mode}'") unless ENV['BUILDPACK_MODE']
@@ -78,5 +86,21 @@ class UpstreamHelper
       )
       exit(1)
     end
+  end
+
+  def setup_firewall
+    return unless offline?
+
+    action 'Bringing firewall up, bye bye internet'
+
+    masquerade_dns_only
+  end
+
+  def teardown_firewall
+    return unless offline?
+
+    action 'Taking firewall down, internet is back'
+
+    reinstate_default_masquerading_rules
   end
 end
