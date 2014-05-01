@@ -58,7 +58,15 @@ echo "******* CI ***************************************************"
 echo "******* Running offline specs"
 BUILDPACK_MODE=offline rspec -f d
 
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
 echo
 echo "******* CI ***************************************************"
 echo "******* Running online specs"
 bundle exec rspec -f d
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
