@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 require './lib/scripts_helpers'
+require 'json'
+require 'pry'
 
 action('Logging into CF')
 warn('* If this times out, check your routing to the CF API')
@@ -11,18 +13,38 @@ action('Creating space')
 `cf create-space integration -o pivotal`
 `cf target -o pivotal -s integration`
 
-# puts_action('Adding Service Broker')
-#
-# unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
-#   warning_banner(
-#       'You must provide AppDirect credentials:',
-#       'APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
-#   )
-# end
-#
-# `cf create-service-broker appdirect #{ENV['APPDIRECT_USERNAME']} #{ENV['APPDIRECT_PASSWORD']} #{ENV['APPDIRECT_URL']}`
-#
-#
-# cf curl /v2/services?q=label:elephantsql
-#
-# cf curl <url of free elephantsql plan> -X PUT -d '{"public":true}'
+action('Adding Service Broker')
+
+unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
+  warning_banner(
+      'You must provide AppDirect credentials:',
+      'APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
+  )
+end
+
+`cf create-service-broker appdirect #{ENV['APPDIRECT_USERNAME']} #{ENV['APPDIRECT_PASSWORD']} #{ENV['APPDIRECT_URL']}`
+
+if !$?.success?
+  info 'appdirect service already installed'
+else
+  info 'appdirect service installed'
+end
+
+raw_services = `cf curl /v2/services?q=label:elephantsql`
+services = JSON.parse(raw_services)
+service_plans_url = services['resources'].first['entity']['service_plans_url']
+
+raw_plans = `cf curl #{service_plans_url}`
+plans = JSON.parse(raw_plans)
+free_plan = plans['resources'].first { |plan| plan['entity']['free'] }
+free_plan_url = free_plan['metadata']['url']
+
+raw_free_plan_update = `cf curl #{free_plan_url} -X PUT -d '{"public":true}'`
+free_plan_update = JSON.parse(raw_free_plan_update)
+
+if !free_plan_update['entity']['public']
+  warn 'failed to make elephantsql public'
+  exit 1
+end
+
+info 'elephantsql free plan is now public'
