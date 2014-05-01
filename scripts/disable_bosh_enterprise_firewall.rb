@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'bundler/setup'
 require './lib/scripts_helpers'
 
 puts '----> Enterprise firewall emulation for bosh'
