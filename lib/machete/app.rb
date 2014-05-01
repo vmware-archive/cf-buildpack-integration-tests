@@ -1,5 +1,6 @@
 require 'httparty'
 require 'machete/system_helper'
+require 'json'
 require 'pry'
 
 module Machete
@@ -34,7 +35,6 @@ module Machete
       puts "Output from command: #{command}\n"
 
       puts @output
-
     end
 
     def homepage_html
@@ -43,6 +43,22 @@ module Machete
 
     def url
       run_cmd("cf app #{app_name} | grep url").split(' ').last
+    end
+
+    def staged?
+      raw_spaces = run_cmd('cf curl /v2/spaces')
+      spaces = JSON.parse(raw_spaces)
+      test_space = spaces['resources'].detect { |resource| resource['entity']['name'] == 'integration'}
+      apps_url = test_space['entity']['apps_url']
+
+      raw_apps = run_cmd("cf curl #{apps_url}")
+      apps = JSON.parse(raw_apps)
+      app = apps['resources'].detect { |resource| resource['entity']['name'] == app_name }
+      app['entity']['package_state'] == 'STAGED'
+    end
+
+    def logs
+      run_cmd("cf logs #{app_name} --recent")
     end
 
     private

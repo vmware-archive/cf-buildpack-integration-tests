@@ -15,6 +15,18 @@ module CloudFoundry
   end
 end
 
+
+RSpec::Matchers.define :be_staged do ||
+  match do |app|
+    app.staged?
+  end
+
+  failure_message_for_should do |app|
+    "App is not staged. Logs are:\n" +
+    app.logs
+  end
+end
+
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
 
