@@ -2,6 +2,11 @@
 
 echo
 echo "******* CI ***************************************************"
+echo "******* Set vagrant root on CI machine - needed by firewall scripts"
+export VAGRANT_CWD=/Users/pivotal/workspace/bosh-lite
+
+echo
+echo "******* CI ***************************************************"
 echo "******* Fetching CF CLI"
 uname_lower=$(echo `uname` | awk '{print tolower($0)}')
 curl http://go-cli.s3.amazonaws.com/master/cf-$uname_lower-amd64.tgz | tar xzv
