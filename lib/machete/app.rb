@@ -23,13 +23,18 @@ module Machete
         command += " -c '#{@cmd}'" if @cmd
         run_cmd("#{command} --no-start")
         run_cmd("cf bind-service #{app_name} lilelephant")
-        # command = "cf start #{app_name} "
         run_cmd(command)
       else
         command = "cf push #{app_name} -b #{buildpack_name}"
         command += " -c '#{@cmd}'" if @cmd
       end
       @output = run_cmd(command)
+
+      puts "*" * 40
+      puts "Output from command: #{command}\n"
+
+      puts @output
+
     end
 
     def homepage_html
