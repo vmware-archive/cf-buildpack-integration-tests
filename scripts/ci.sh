@@ -55,10 +55,10 @@ cf target -o pivotal -s integration-tests
 
 echo
 echo "******* CI ***************************************************"
-echo "******* Running online specs"
-rspec -f d
+echo "******* Running offline specs"
+BUILDPACK_MODE=offline rspec -f d
 
 echo
 echo "******* CI ***************************************************"
-echo "******* Running offline specs"
-BUILDPACK_MODE=offline rspec -f d
+echo "******* Running online specs"
+bundle exec rspec -f d
