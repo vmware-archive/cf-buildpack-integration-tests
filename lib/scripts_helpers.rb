@@ -6,7 +6,10 @@ def set_vagrant_working_directory
 end
 
 def raw_warden_postrouting_rules
-  output = `vagrant ssh -c "sudo iptables -t nat -L warden-postrouting -v -n --line-numbers"`.split("\n")
+  output = Bundler.with_clean_env do
+    `vagrant ssh -c "sudo iptables -t nat -L warden-postrouting -v -n --line-numbers"`.split("\n")
+  end
+
   chains = output.drop 1
   keys = chains.shift.split(/\s+/).map { |key| key.to_sym }
 
@@ -48,14 +51,18 @@ def masquerade_dns_only
     action 'Removing matching rules: '
     puts remove_rule_commands
 
-    puts `vagrant ssh -c "#{remove_rule_commands}"`
+    Bundler.with_clean_env do
+      puts `vagrant ssh -c "#{remove_rule_commands}"`
+    end
   end
 
   dns_only_rules = select_dns_only_rules(raw_rules)
 
   if dns_only_rules.empty?
     action 'Adding DNS masquerading rule'
-    puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d 192.168.21.2 -j MASQUERADE"`
+    Bundler.with_clean_env do
+      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d 192.168.21.2 -j MASQUERADE"`
+    end
   else
     warn 'dns-only warden-postrouting chain already exists'
   end
@@ -71,7 +78,9 @@ def reinstate_default_masquerading_rules
 
   if default_rules.empty?
     action 'Reinstating rules: '
-    puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 ! -d 10.244.0.0/19 -j MASQUERADE"`
+    Bundler.with_clean_env do
+      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 ! -d 10.244.0.0/19 -j MASQUERADE"`
+    end
   else
     warn 'Masquerading rules already exist'
   end
@@ -82,8 +91,9 @@ def reinstate_default_masquerading_rules
     warn 'Could not find DNS masquerading rule'
   else
     action 'Removing DNS masquerading rule'
-
-    puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d 192.168.21.2 -j MASQUERADE"`
+    Bundler.with_clean_env do
+      puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d 192.168.21.2 -j MASQUERADE"`
+    end
   end
 
   puts raw_warden_postrouting_rules
