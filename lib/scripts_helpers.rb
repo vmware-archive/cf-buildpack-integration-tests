@@ -31,7 +31,7 @@ def select_dns_only_rules(rules)
   rules.select do |rule|
     rule[:target] == 'MASQUERADE' &&
         rule[:source] == '10.244.0.0/19' &&
-        rule[:destination] == '192.168.21.2'
+        rule[:destination] == '192.168.21.0/25'
   end
 end
 
@@ -61,7 +61,7 @@ def masquerade_dns_only
   if dns_only_rules.empty?
     action 'Adding DNS masquerading rule'
     Bundler.with_clean_env do
-      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d 192.168.21.2 -j MASQUERADE"`
+      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d 192.168.21.0/25 -j MASQUERADE"`
     end
   else
     warn 'dns-only warden-postrouting chain already exists'
@@ -92,7 +92,7 @@ def reinstate_default_masquerading_rules
   else
     action 'Removing DNS masquerading rule'
     Bundler.with_clean_env do
-      puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d 192.168.21.2 -j MASQUERADE"`
+      puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d 192.168.21.0/25 -j MASQUERADE"`
     end
   end
 
