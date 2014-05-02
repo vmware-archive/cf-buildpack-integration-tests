@@ -39,6 +39,10 @@ RSpec.configure do |config|
     CloudFoundry.upstream_helper.teardown_firewall
   end
 
+  config.before(:each, :null_buildpack) do
+    CloudFoundry.upstream_helper.setup_language_buildpack :null
+  end
+
   config.before(:each, :ruby_buildpack) do
     CloudFoundry.upstream_helper.setup_language_buildpack :ruby
   end
