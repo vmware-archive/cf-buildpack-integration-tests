@@ -11,7 +11,7 @@ Machete::Logger.log_to('machete.log')
 
 module CloudFoundry
   def self.upstream_helper
-    @upstream_helpxer ||= UpstreamHelper.new
+    @upstream_helper ||= UpstreamHelper.new
   end
 end
 
