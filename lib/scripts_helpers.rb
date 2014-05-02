@@ -1,3 +1,7 @@
+def dns_addr
+  @dns_addr ||= `vagrant ssh -c "sudo ip -f inet addr" | grep eth0 | grep inet`.split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
+end
+
 def set_vagrant_working_directory
   unless ENV['VAGRANT_CWD']
     ENV['VAGRANT_CWD']="#{ENV['HOME']}/workspace/bosh-lite/"
@@ -31,7 +35,7 @@ def select_dns_only_rules(rules)
   rules.select do |rule|
     rule[:target] == 'MASQUERADE' &&
         rule[:source] == '10.244.0.0/19' &&
-        rule[:destination] == '192.168.21.0/25'
+        rule[:destination] == dns_addr
   end
 end
 
@@ -61,7 +65,7 @@ def masquerade_dns_only
   if dns_only_rules.empty?
     action 'Adding DNS masquerading rule'
     Bundler.with_clean_env do
-      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d 192.168.21.0/25 -j MASQUERADE"`
+      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
     end
   else
     warn 'dns-only warden-postrouting chain already exists'
@@ -92,7 +96,7 @@ def reinstate_default_masquerading_rules
   else
     action 'Removing DNS masquerading rule'
     Bundler.with_clean_env do
-      puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d 192.168.21.0/25 -j MASQUERADE"`
+      puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
     end
   end
 
