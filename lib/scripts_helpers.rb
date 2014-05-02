@@ -1,16 +1,50 @@
 def dns_addr
-  @dns_addr ||= `vagrant ssh -c "sudo ip -f inet addr" | grep eth0 | grep inet`.split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
+  @dns_addr ||=
+      with_vagrant_env { `vagrant ssh -c "sudo ip -f inet addr" | grep eth0 | grep inet`.split(" ")[1].gsub(/\d+\/\d+$/, "0/24") }
+end
+
+def action(*actions)
+  actions.each do |action|
+    puts "-----> #{action}"
+  end
+end
+
+def warning_banner(*messages)
+  warn('*' * 80)
+  warn('**** WARNING')
+  messages.each do |message|
+    warn("**** #{message}")
+  end
+  warn('****')
+end
+
+def info(*messages)
+  messages.each do |message|
+    puts("INFO> #{message}")
+  end
+end
+
+if ENV['VAGRANT_CWD']
+  VAGRANT_CWD = ENV['VAGRANT_CWD']
+else
+  VAGRANT_CWD = "#{ENV['HOME']}/workspace/bosh-lite/"
+  action "No VAGRANT_CWD, using default: #{ENV['VAGRANT_CWD']}"
 end
 
 def set_vagrant_working_directory
-  unless ENV['VAGRANT_CWD']
-    ENV['VAGRANT_CWD']="#{ENV['HOME']}/workspace/bosh-lite/"
-    action "No VAGRANT_CWD, using default: #{ENV['VAGRANT_CWD']}"
+  # this is local to the clean env - thats why it seems strange that we set it often.
+  ENV['VAGRANT_CWD'] = VAGRANT_CWD
+end
+
+def with_vagrant_env
+  Bundler.with_clean_env do
+    set_vagrant_working_directory
+    yield
   end
 end
 
 def raw_warden_postrouting_rules
-  output = Bundler.with_clean_env do
+  output = with_vagrant_env do
     `vagrant ssh -c "sudo iptables -t nat -L warden-postrouting -v -n --line-numbers"`.split("\n")
   end
 
@@ -40,8 +74,6 @@ def select_dns_only_rules(rules)
 end
 
 def masquerade_dns_only
-  set_vagrant_working_directory
-
   raw_rules = raw_warden_postrouting_rules
   default_rules = select_default_masquerade_rules(raw_rules)
 
@@ -55,7 +87,7 @@ def masquerade_dns_only
     action 'Removing matching rules: '
     puts remove_rule_commands
 
-    Bundler.with_clean_env do
+    with_vagrant_env do
       puts `vagrant ssh -c "#{remove_rule_commands}"`
     end
   end
@@ -64,7 +96,7 @@ def masquerade_dns_only
 
   if dns_only_rules.empty?
     action 'Adding DNS masquerading rule'
-    Bundler.with_clean_env do
+    with_vagrant_env do
       puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
     end
   else
@@ -75,14 +107,12 @@ def masquerade_dns_only
 end
 
 def reinstate_default_masquerading_rules
-  set_vagrant_working_directory
-
   raw_rules = raw_warden_postrouting_rules
   default_rules = select_default_masquerade_rules(raw_rules)
 
   if default_rules.empty?
     action 'Reinstating rules: '
-    Bundler.with_clean_env do
+    with_vagrant_env do
       puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 ! -d 10.244.0.0/19 -j MASQUERADE"`
     end
   else
@@ -95,7 +125,7 @@ def reinstate_default_masquerading_rules
     warn 'Could not find DNS masquerading rule'
   else
     action 'Removing DNS masquerading rule'
-    Bundler.with_clean_env do
+    with_vagrant_env do
       puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
     end
   end
@@ -104,23 +134,3 @@ def reinstate_default_masquerading_rules
 
 end
 
-def action(*actions)
-  actions.each do |action|
-    puts "-----> #{action}"
-  end
-end
-
-def warning_banner(*messages)
-  warn('*' * 80)
-  warn('**** WARNING')
-  messages.each do |message|
-    warn("**** #{message}")
-  end
-  warn('****')
-end
-
-def info(*messages)
-  messages.each do |message|
-    puts("INFO> #{message}")
-  end
-end
