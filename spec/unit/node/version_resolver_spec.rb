@@ -18,7 +18,13 @@ describe "Node version resolver" do
   end
 
   def resolve_version(version = "null")
-    `node #{node_buildpack_path}/lib/version_resolver.js "#{version}"`.strip
+    if `uname`.include?("Darwin")
+      node_executable = "node"
+    else
+      node_executable = "#{node_buildpack_path}/bin/node"
+    end
+
+    `#{node_executable} #{node_buildpack_path}/lib/version_resolver.js "#{version}"`.strip
   end
 
   describe "supporting ranges" do
