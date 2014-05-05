@@ -3,13 +3,11 @@ require 'logger'
 module Machete
   module Logger
     def self.logger
-      @logger ||= log_to
+      @logger ||= ::Logger.new(STDOUT)
     end
 
-    def self.log_to(file=STDOUT)
-      @logger = ::Logger.new(file)
-      @logger.level = ::Logger::INFO
-      @logger
+    def self.logger=(new_logger)
+      @logger = new_logger
     end
 
     def logger

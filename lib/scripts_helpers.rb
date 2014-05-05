@@ -1,3 +1,5 @@
+require 'cloud_foundry'
+
 def dns_addr
   @dns_addr ||=
       with_vagrant_env { `vagrant ssh -c "sudo ip -f inet addr" | grep eth0 | grep inet`.split(" ")[1].gsub(/\d+\/\d+$/, "0/24") }
@@ -5,22 +7,7 @@ end
 
 def action(*actions)
   actions.each do |action|
-    puts "-----> #{action}"
-  end
-end
-
-def warning_banner(*messages)
-  warn('*' * 80)
-  warn('**** WARNING')
-  messages.each do |message|
-    warn("**** #{message}")
-  end
-  warn('****')
-end
-
-def info(*messages)
-  messages.each do |message|
-    puts("INFO> #{message}")
+    CloudFoundry.logger.info "-----> #{action}"
   end
 end
 
@@ -85,10 +72,10 @@ def masquerade_dns_only
     end.join("\n")
 
     action 'Removing matching rules: '
-    puts remove_rule_commands
+    CloudFoundry.logger.info remove_rule_commands
 
     with_vagrant_env do
-      puts `vagrant ssh -c "#{remove_rule_commands}"`
+      CloudFoundry.logger.info `vagrant ssh -c "#{remove_rule_commands}"`
     end
   end
 
@@ -97,13 +84,13 @@ def masquerade_dns_only
   if dns_only_rules.empty?
     action 'Adding DNS masquerading rule'
     with_vagrant_env do
-      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
+      CloudFoundry.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
     end
   else
     warn 'dns-only warden-postrouting chain already exists'
   end
 
-  puts raw_warden_postrouting_rules
+  CloudFoundry.logger.info raw_warden_postrouting_rules
 end
 
 def reinstate_default_masquerading_rules
@@ -113,7 +100,7 @@ def reinstate_default_masquerading_rules
   if default_rules.empty?
     action 'Reinstating rules: '
     with_vagrant_env do
-      puts `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 ! -d 10.244.0.0/19 -j MASQUERADE"`
+      CloudFoundry.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 ! -d 10.244.0.0/19 -j MASQUERADE"`
     end
   else
     warn 'Masquerading rules already exist'
@@ -126,11 +113,11 @@ def reinstate_default_masquerading_rules
   else
     action 'Removing DNS masquerading rule'
     with_vagrant_env do
-      puts `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
+      CloudFoundry.logger.info `vagrant ssh -c "sudo iptables -t nat -D warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE"`
     end
   end
 
-  puts raw_warden_postrouting_rules
+  CloudFoundry.logger.info raw_warden_postrouting_rules
 
 end
 

@@ -31,10 +31,8 @@ module Machete
       end
       @output = run_cmd(command)
 
-      puts "*" * 40
-      puts "Output from command: #{command}\n"
-
-      puts @output
+      logger.info "Output from command: #{command}\n" +
+                      @output
     end
 
     def homepage_html
@@ -48,7 +46,7 @@ module Machete
     def staged?
       raw_spaces = run_cmd('cf curl /v2/spaces')
       spaces = JSON.parse(raw_spaces)
-      test_space = spaces['resources'].detect { |resource| resource['entity']['name'] == 'integration'}
+      test_space = spaces['resources'].detect { |resource| resource['entity']['name'] == 'integration' }
       apps_url = test_space['entity']['apps_url']
 
       raw_apps = run_cmd("cf curl #{apps_url}")

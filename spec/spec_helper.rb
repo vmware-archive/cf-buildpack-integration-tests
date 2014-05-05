@@ -5,27 +5,21 @@ $: << File.expand_path("..", __FILE__)
 $: << File.expand_path("../../lib", __FILE__)
 
 require 'machete'
+require 'cloud_foundry'
 require 'helpers/upstream_helper'
 
-Machete::Logger.log_to('machete.log')
-
-module CloudFoundry
-  def self.upstream_helper
-    @upstream_helper ||= UpstreamHelper.new
-  end
-end
-
-
-RSpec::Matchers.define :be_staged do ||
+RSpec::Matchers.define :be_staged do | |
   match do |app|
     app.staged?
   end
 
   failure_message_for_should do |app|
     "App is not staged. Logs are:\n" +
-    app.logs
+        app.logs
   end
 end
+
+Machete::Logger.logger = CloudFoundry.logger
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

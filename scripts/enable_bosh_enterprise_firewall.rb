@@ -2,8 +2,8 @@
 require 'bundler/setup'
 require './lib/scripts_helpers'
 
-puts '----> Enterprise firewall emulation for bosh'
-puts '----> Enabling firewall'
+CloudFoundry.logger.info '----> Enterprise firewall emulation for bosh'
+CloudFoundry.logger.info '----> Enabling firewall'
 
 masquerade_dns_only
 

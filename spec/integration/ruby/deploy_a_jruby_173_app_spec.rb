@@ -7,7 +7,6 @@ describe 'deploying a jruby 1.7.3 application', :ruby_buildpack do
       expect(app.output).to match("Installing JVM")
       expect(app.output).to match("ruby-1.8.7-jruby-1.7.8")
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-      puts app.output
     end
   end
 end

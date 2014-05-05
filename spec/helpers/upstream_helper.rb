@@ -20,7 +20,7 @@ class UpstreamHelper
                  end
 
     result = Bundler.with_clean_env do
-      puts %x(
+      CloudFoundry.logger.info %x(
         cd #{File.expand_path("cf-buildpack-#{language}", buildpack_root)} &&
         rm -f #{language}_buildpack.zip &&
         bundle &&
@@ -32,7 +32,7 @@ class UpstreamHelper
     end
 
     if $? != 0
-      puts "Could not create the #{language} test buildpack: \n#{result}"
+      CloudFoundry.logger.warn "Could not create the #{language} test buildpack: \n#{result}"
       exit(false)
     end
 
@@ -61,7 +61,7 @@ class UpstreamHelper
 
   def get_buildpack_mode
     mode = (ENV['BUILDPACK_MODE'] || :online).downcase.to_sym
-    info('BUILDPACK_MODE not specified.', "Defaulting to '#{mode}'") unless ENV['BUILDPACK_MODE']
+    CloudFoundry.logger.info("BUILDPACK_MODE not specified.\nDefaulting to '#{mode}'") unless ENV['BUILDPACK_MODE']
     mode
   end
 
@@ -71,7 +71,7 @@ class UpstreamHelper
 
   def get_buildpack_root
     path = ENV['BUILDPACK_ROOT'] || "../buildpacks"
-    info('BUILDPACK_ROOT not specified.', "Defaulting to '#{path}'") unless ENV['BUILDPACK_ROOT']
+    CloudFoundry.logger.info("BUILDPACK_ROOT not specified.\nDefaulting to '#{path}'") unless ENV['BUILDPACK_ROOT']
     path
   end
 
@@ -79,11 +79,9 @@ class UpstreamHelper
     services = `cf services`
 
     unless services =~ /^lilelephant/
-      warning_banner(
-          "Could not find 'lilelephant' service in current cf space",
-          'Output was: ',
-          services
-      )
+      CloudFoundry.logger.warn("Could not find 'lilelephant' service in current cf space")
+      CloudFoundry.logger.warn('Output was: ')
+      CloudFoundry.logger.warn(services)
       exit(1)
     end
   end
