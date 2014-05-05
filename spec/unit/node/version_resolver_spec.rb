@@ -9,12 +9,11 @@ describe "Node version resolver" do
   let(:node_buildpack_path) { "#{UpstreamHelper.new.get_buildpack_root}/cf-buildpack-nodejs" }
 
   before do
-    FileUtils.mv("#{node_buildpack_path}/tmp/versions.json", "#{node_buildpack_path}/tmp/versions.json.bak")
     FileUtils.cp_r("spec/fixtures/versions.json", "#{node_buildpack_path}/tmp/versions.json")
   end
-  
+
   after do
-    FileUtils.mv("#{node_buildpack_path}/tmp/versions.json.bak", "#{node_buildpack_path}/tmp/versions.json")
+    FileUtils.rm_f("#{node_buildpack_path}/tmp/versions.json")
   end
 
   def resolve_version(version = "null")
