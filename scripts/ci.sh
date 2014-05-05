@@ -40,8 +40,8 @@ echo "******* Fetching buildpacks for testing"
 rm -rf tmp_buildpacks
 mkdir tmp_buildpacks
 git clone https://github.com/cloudfoundry/cf-buildpack-ruby tmp_buildpacks/cf-buildpack-ruby
-git clone https://github.com/pivotal-cf-experimental/cf-buildpack-go tmp_buildpacks/cf-buildpack-go
-git clone https://github.com/pivotal-cf-experimental/cf-buildpack-nodejs tmp_buildpacks/cf-buildpack-nodejs
+git clone https://github.com/cloudfoundry-incubator/cf-buildpack-go tmp_buildpacks/cf-buildpack-go
+git clone https://github.com/cloudfoundry/cf-buildpack-nodejs tmp_buildpacks/cf-buildpack-nodejs
 export BUILDPACK_ROOT=tmp_buildpacks
 
 echo
