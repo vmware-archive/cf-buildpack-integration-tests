@@ -42,6 +42,7 @@ mkdir tmp_buildpacks
 git clone https://github.com/cloudfoundry/cf-buildpack-ruby tmp_buildpacks/cf-buildpack-ruby
 git clone https://github.com/cloudfoundry-incubator/cf-buildpack-go tmp_buildpacks/cf-buildpack-go
 git clone https://github.com/cloudfoundry/cf-buildpack-nodejs tmp_buildpacks/cf-buildpack-nodejs
+git clone https://github.com/cf-buildpacks/cf-buildpack-null tmp_buildpacks/cf-buildpack-null
 export BUILDPACK_ROOT=tmp_buildpacks
 
 echo
