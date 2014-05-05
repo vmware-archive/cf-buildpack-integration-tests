@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-require './lib/scripts_helpers'
+$: << './lib'
+require 'scripts_helpers'
 require 'json'
 require 'pry'
 
@@ -17,17 +18,16 @@ action('Adding Service Broker')
 
 unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
   CloudFoundry.logger.warn(
-      'You must provide AppDirect credentials:',
-      'APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
+      'You must provide the APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
   )
 end
 
 `cf create-service-broker appdirect #{ENV['APPDIRECT_USERNAME']} #{ENV['APPDIRECT_PASSWORD']} #{ENV['APPDIRECT_URL']}`
 
 if !$?.success?
-  CloudFoundry.logger 'appdirect service already installed'
+  CloudFoundry.logger.info 'appdirect service already installed'
 else
-  CloudFoundry.logger 'appdirect service installed'
+  CloudFoundry.logger.info 'appdirect service installed'
 end
 
 raw_services = `cf curl /v2/services?q=label:elephantsql`
@@ -47,4 +47,4 @@ if !free_plan_update['entity']['public']
   exit 1
 end
 
-CloudFoundry.logger 'elephantsql free plan is now public'
+CloudFoundry.logger.info 'elephantsql free plan is now public'

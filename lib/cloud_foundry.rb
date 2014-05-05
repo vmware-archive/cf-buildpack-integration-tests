@@ -1,3 +1,5 @@
+require 'logger'
+
 module CloudFoundry
   def self.upstream_helper
     @upstream_helper ||= UpstreamHelper.new
