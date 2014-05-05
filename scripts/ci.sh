@@ -50,8 +50,8 @@ echo "******* Create CF org and space"
 cf login -u admin -p admin
 cf create-org pivotal
 cf target -o pivotal
-cf create-space integration-tests
-cf target -o pivotal -s integration-tests
+cf create-space integration
+cf target -o pivotal -s integration
 
 echo
 echo "******* CI ***************************************************"
