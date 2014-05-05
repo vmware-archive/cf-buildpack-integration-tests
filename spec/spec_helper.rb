@@ -49,6 +49,10 @@ RSpec.configure do |config|
     CloudFoundry.upstream_helper.setup_language_buildpack :nodejs
   end
 
+  config.before(:each, :python_buildpack) do
+    CloudFoundry.upstream_helper.setup_language_buildpack :python
+  end
+
   config.before(:each) do
     @pwd = Dir.pwd
   end

@@ -43,6 +43,7 @@ git clone https://github.com/cloudfoundry/cf-buildpack-ruby tmp_buildpacks/cf-bu
 git clone https://github.com/cloudfoundry-incubator/cf-buildpack-go tmp_buildpacks/cf-buildpack-go
 git clone https://github.com/cloudfoundry/cf-buildpack-nodejs tmp_buildpacks/cf-buildpack-nodejs
 git clone https://github.com/cf-buildpacks/cf-buildpack-null tmp_buildpacks/cf-buildpack-null
+git clone https://github.com/cloudfoundry-incubator/cf-buildpack-python tmp_buildpacks/cf-buildpack-python
 export BUILDPACK_ROOT=tmp_buildpacks
 
 echo
