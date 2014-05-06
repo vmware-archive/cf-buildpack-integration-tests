@@ -98,6 +98,7 @@ class UpstreamHelper
 
     masquerade_dns_only
     open_firewall_for_appdirect
+    open_firewall_for_elephantsql
   end
 
   def teardown_firewall

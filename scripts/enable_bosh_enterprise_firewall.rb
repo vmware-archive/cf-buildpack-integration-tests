@@ -8,4 +8,5 @@ CloudFoundry.logger.info '----> Enabling firewall'
 
 masquerade_dns_only
 open_firewall_for_appdirect
+open_firewall_for_elephantsql
 
