@@ -17,7 +17,7 @@ module Machete
     end
 
     def push()
-      Dir.chdir(app_path)
+      Dir.chdir("test_applications/#{@language}/#{app_name}")
       run_cmd("cf delete -f #{app_name}")
       if @with_pg
         command = "cf push #{app_name} -b #{buildpack_name}"
@@ -63,14 +63,6 @@ module Machete
 
     def buildpack_name
       "#{@language}-test-buildpack"
-    end
-
-    def app_path
-      if @language == :go
-        "test_applications/go/src/#{app_name}"
-      else
-        "test_applications/#{@language}/#{app_name}"
-      end
     end
   end
 end
