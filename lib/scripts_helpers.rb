@@ -1,3 +1,4 @@
+$: << File.expand_path("..", __FILE__)
 require 'cloud_foundry'
 
 def dns_addr

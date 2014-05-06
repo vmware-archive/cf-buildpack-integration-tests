@@ -4,6 +4,9 @@ require 'scripts_helpers'
 require 'json'
 require 'pry'
 
+# Example usage:
+#   APPDIRECT_USERNAME=$APPDIRECT_USERNAME APPDIRECT_PASSWORD=$APPDIRECT_PASSWORD APPDIRECT_URL=$APPDIRECT_URL ./scripts/prepare_space.rb
+
 action('Logging into CF')
 warn('* If this times out, check your routing to the CF API')
 
@@ -36,7 +39,7 @@ services = JSON.parse(raw_services)
 service_plans_url = services['resources'].first['entity']['service_plans_url']
 raw_plans = `cf curl #{service_plans_url}`
 plans = JSON.parse(raw_plans)
-free_plan = plans['resources'].first { |plan| plan['entity']['free'] }
+free_plan = plans['resources'].detect { |plan| plan['entity']['free'] }
 free_plan_url = free_plan['metadata']['url']
 
 raw_free_plan_update = `cf curl #{free_plan_url} -X PUT -d '{"public":true}'`
@@ -48,3 +51,5 @@ if !free_plan_update['entity']['public']
 end
 
 CloudFoundry.logger.info 'elephantsql free plan is now public'
+
+CloudFoundry.logger.info `cf create-service elephantsql turtle lilelephant`

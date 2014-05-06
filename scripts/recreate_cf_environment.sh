@@ -1,7 +1,10 @@
+#!/bin/bash --login
+
 source "$HOME/.rvm/scripts/rvm"
 rvm use 1.9.3
 
 cd ~/workspace/cf-release
+bundle
 rm -f dev_releases/*.yml
 bundle exec bosh create release
 
