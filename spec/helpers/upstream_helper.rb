@@ -20,11 +20,16 @@ class UpstreamHelper
                  end
 
     result = Bundler.with_clean_env do
+      if File.exists?("#{File.expand_path("cf-buildpack-#{language}", buildpack_root)}/bin/package")
+        package_command = "./bin/package #{buildpack_mode}"
+      else
+        package_command = "bundle && #{online_var} bundle exec rake package"
+      end
+
       CloudFoundry.logger.info %x(
         cd #{File.expand_path("cf-buildpack-#{language}", buildpack_root)} &&
         rm -f #{language}_buildpack.zip &&
-        bundle &&
-        #{online_var} bundle exec rake package &&
+        #{package_command} &&
         (cf create-buildpack #{language}-test-buildpack #{language}_buildpack.zip 1 --enable &&
         cf update-buildpack #{language}-test-buildpack -p #{language}_buildpack.zip --enable) &&
         rm #{language}_buildpack.zip
