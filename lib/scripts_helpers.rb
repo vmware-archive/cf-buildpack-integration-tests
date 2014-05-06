@@ -94,6 +94,11 @@ def masquerade_dns_only
   CloudFoundry.logger.info raw_warden_postrouting_rules
 end
 
+def open_firewall_for_appdirect
+  host = URI.parse(ENV['APPDIRECT_URL']).host
+  `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{host} -j MASQUERADE " 2>&1`
+end
+
 def reinstate_default_masquerading_rules
   raw_rules = raw_warden_postrouting_rules
   default_rules = select_default_masquerade_rules(raw_rules)

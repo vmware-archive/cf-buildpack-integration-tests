@@ -7,32 +7,36 @@ module Machete
   class App
     include SystemHelper
 
-    attr_reader :output, :app_name
+    attr_reader :output, :app_name, :manifest
 
     def initialize(app_name, language, opts={})
       @app_name = app_name
       @language = language
       @cmd = opts.fetch(:cmd, '')
       @with_pg = opts.fetch(:with_pg, false)
+      @manifest = opts.fetch(:manifest, nil)
     end
 
     def push()
-      Dir.chdir("test_applications/#{@language}/#{app_name}")
-      run_cmd("cf delete -f #{app_name}")
-      if @with_pg
-        command = "cf push #{app_name} -b #{buildpack_name}"
-        command += " -c '#{@cmd}'" if @cmd
-        run_cmd("#{command} --no-start")
-        run_cmd("cf bind-service #{app_name} lilelephant")
-        run_cmd(command)
-      else
-        command = "cf push #{app_name} -b #{buildpack_name}"
-        command += " -c '#{@cmd}'" if @cmd
-      end
-      @output = run_cmd(command)
+      Dir.chdir("test_applications/#{@language}/#{app_name}") do
+        generate_manifest
 
-      logger.info "Output from command: #{command}\n" +
-                      @output
+        run_cmd("cf delete -f #{app_name}")
+        if @with_pg
+          command = "cf push #{app_name} -b #{buildpack_name}"
+          command += " -c '#{@cmd}'" if @cmd
+          run_cmd("#{command} --no-start")
+          run_cmd("cf bind-service #{app_name} lilelephant")
+          run_cmd(command)
+        else
+          command = "cf push #{app_name} -b #{buildpack_name}"
+          command += " -c '#{@cmd}'" if @cmd
+        end
+        @output = run_cmd(command)
+
+        logger.info "Output from command: #{command}\n" +
+                        @output
+      end
     end
 
     def staging_log
@@ -67,6 +71,22 @@ module Machete
 
     def buildpack_name
       "#{@language}-test-buildpack"
+    end
+
+    def generate_manifest
+      return unless manifest
+
+      File.open('manifest.yml', 'w') do |manifest_file|
+        manifest_file.write @manifest.to_yaml
+      end
+    end
+
+    def app_path
+      if @language == :go
+        "test_applications/go/src/#{app_name}"
+      else
+        "test_applications/#{@language}/#{app_name}"
+      end
     end
   end
 end

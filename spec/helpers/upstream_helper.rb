@@ -97,6 +97,7 @@ class UpstreamHelper
     action 'Bringing firewall up, bye bye internet'
 
     masquerade_dns_only
+    open_firewall_for_appdirect
   end
 
   def teardown_firewall
