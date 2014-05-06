@@ -35,6 +35,10 @@ module Machete
                       @output
     end
 
+    def staging_log
+      run_cmd("cf files #{app_name} logs/staging_task.log")
+    end
+
     def homepage_html
       HTTParty.get("http://#{url}").body
     end
