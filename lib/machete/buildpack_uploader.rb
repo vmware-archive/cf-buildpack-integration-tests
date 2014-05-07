@@ -1,18 +1,12 @@
 module Machete
   class BuildpackUploader
-    attr_reader :language
+    attr_reader :language, :location
 
-    def initialize(language, offline = false)
+    def initialize(language, location = ".")
       @language = language
+      @location = location
+
       setup_language_buildpack
-    end
-
-    def buildpack_root
-      return @buildpack_root if @buildpack_root
-
-      @buildpack_root = ENV['BUILDPACK_ROOT'] || "../buildpacks"
-      Machete.logger.info("BUILDPACK_ROOT not specified.\nDefaulting to '#{@buildpack_root}'") unless ENV['BUILDPACK_ROOT']
-      @buildpack_root
     end
 
     private
@@ -21,14 +15,14 @@ module Machete
       Machete.logger.action("Installing buildpack for: #{language} in #{buildpack_mode} mode")
 
       result = Bundler.with_clean_env do
-        if File.exists?("#{File.expand_path("cf-buildpack-#{language}", buildpack_root)}/bin/package")
+        if File.exists?("#{location}/bin/package")
           package_command = "./bin/package #{buildpack_mode}"
         else
           package_command = "bundle && #{online_string_var} bundle exec rake package"
         end
 
         Machete.logger.info %x(
-          cd #{File.expand_path("cf-buildpack-#{language}", buildpack_root)} &&
+          cd #{location} &&
           rm -f #{language}_buildpack.zip &&
           #{package_command} &&
           (cf create-buildpack #{language}-test-buildpack #{language}_buildpack.zip 1 --enable &&
