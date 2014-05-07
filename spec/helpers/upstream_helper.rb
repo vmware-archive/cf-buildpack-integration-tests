@@ -94,8 +94,9 @@ class UpstreamHelper
   def setup_firewall
     return unless offline?
 
-    action 'Bringing firewall up, bye bye internet'
+    save_iptables
 
+    action 'Bringing firewall up, bye bye internet'
     masquerade_dns_only
     open_firewall_for_appdirect
     open_firewall_for_elephantsql
@@ -106,6 +107,6 @@ class UpstreamHelper
 
     action 'Taking firewall down, internet is back'
 
-    reinstate_default_masquerading_rules
+    restore_iptables
   end
 end
