@@ -94,12 +94,14 @@ class UpstreamHelper
   def setup_firewall
     return unless offline?
 
-    save_iptables
-
     action 'Bringing firewall up, bye bye internet'
+
+    save_iptables
     masquerade_dns_only
-    open_firewall_for_appdirect
-    open_firewall_for_elephantsql
+
+    appdirect_url = URI.parse(ENV['APPDIRECT_URL']).host
+    open_firewall_for_url(appdirect_url)
+    open_firewall_for_url("babar.elephantsql.com")
   end
 
   def teardown_firewall

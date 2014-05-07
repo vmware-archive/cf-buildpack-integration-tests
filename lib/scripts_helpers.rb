@@ -73,12 +73,8 @@ def masquerade_dns_only
   end
 end
 
-def open_firewall_for_appdirect
-  host = URI.parse(ENV['APPDIRECT_URL']).host
-  `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{host} -j MASQUERADE " 2>&1`
-end
-
-def open_firewall_for_elephantsql
-  host = URI.parse(ENV['DATABASE_URL']).host
-  `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{host} -j MASQUERADE " 2>&1`
+def open_firewall_for_url(url)
+  with_vagrant_env do
+    CloudFoundry.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{url} -j MASQUERADE " 2>&1`
+  end
 end
