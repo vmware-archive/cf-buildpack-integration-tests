@@ -51,20 +51,11 @@ module Machete
         end
       end
 
-
       def select_default_masquerade_rules(rules)
         rules.select do |rule|
           rule[:target] == 'MASQUERADE' &&
             rule[:source] == '10.244.0.0/19' &&
             rule[:destination] == '!10.244.0.0/19'
-        end
-      end
-
-      def select_dns_only_rules(rules)
-        rules.select do |rule|
-          rule[:target] == 'MASQUERADE' &&
-            rule[:source] == '10.244.0.0/19' &&
-            rule[:destination] == dns_addr
         end
       end
 
