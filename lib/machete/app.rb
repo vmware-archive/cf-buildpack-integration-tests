@@ -18,7 +18,9 @@ module Machete
     end
 
     def push()
-      Dir.chdir("test_applications/#{@language}/#{app_name}") do
+      fixtures_dir = Dir.exists?("cf_spec") ? "cf_spec/fixtures" : "test_applications/#{@language}"
+
+      Dir.chdir("#{fixtures_dir}/#{app_name}") do
         generate_manifest
 
         run_cmd("cf delete -f #{app_name}")
