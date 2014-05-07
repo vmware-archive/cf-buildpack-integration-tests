@@ -5,3 +5,4 @@ machete.log
 *.log
 **/**/vendor/bundle
 bin/
+tmp/

@@ -13,5 +13,9 @@ module Machete
     def logger
       Machete::Logger.logger
     end
+
+    def self.action(action)
+      logger.info("-----> #{action}")
+    end
   end
 end

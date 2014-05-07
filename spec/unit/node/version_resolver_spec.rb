@@ -6,7 +6,7 @@ describe "Node version resolver" do
 
   # https://github.com/isaacs/node-semver
 
-  let(:node_buildpack_path) { "#{UpstreamHelper.new.get_buildpack_root}/cf-buildpack-nodejs" }
+  let(:node_buildpack_path) { "#{ENV['BUILDPACK_ROOT'] || "../buildpacks"}/cf-buildpack-nodejs" }
 
   before do
     FileUtils.mkdir_p("#{node_buildpack_path}/tmp")
