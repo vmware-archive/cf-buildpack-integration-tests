@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'deploying a rails 3 application', :ruby_buildpack do
-  xit 'make the homepage available' do
+  it 'make the homepage available' do
     Machete.deploy_app("rails3_mri_193", :ruby, {
       cmd: "bundle exec rake db:migrate && bundle exec rails s -p $PORT",
       with_pg: true
