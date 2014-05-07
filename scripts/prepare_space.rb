@@ -13,28 +13,28 @@ warn('* If this times out, check your routing to the CF API')
 
 if ENV['CF_API']
   Machete.logger.info("Setting CF API target to #{ENV['CF_API']}")
-  `cf api #{ENV['CF_API']} --skip-ssl-validation`
+  puts `cf api #{ENV['CF_API']} --skip-ssl-validation`
 else
   Machete.logger.info("CF API target is:")
   Machete.logger.info(`cf api`)
 end
 
-`cf login -u admin -p admin -o pivotal -s integration`
+puts `cf login -u admin -p admin -o pivotal -s integration`
 
 Machete.logger.action('Creating space')
-`cf create-org pivotal`
-`cf create-space integration -o pivotal`
-`cf target -o pivotal -s integration`
+puts `cf create-org pivotal`
+puts `cf create-space integration -o pivotal`
+puts `cf target -o pivotal -s integration`
 
 Machete.logger.action('Adding Service Broker')
 
 unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
   Machete.logger.warn(
-      'You must provide the APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
+    'You must provide the APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
   )
 end
 
-`cf create-service-broker appdirect #{ENV['APPDIRECT_USERNAME']} #{ENV['APPDIRECT_PASSWORD']} #{ENV['APPDIRECT_URL']}`
+puts `cf create-service-broker appdirect #{ENV['APPDIRECT_USERNAME']} #{ENV['APPDIRECT_PASSWORD']} #{ENV['APPDIRECT_URL']}`
 
 if !$?.success?
   Machete.logger.info 'appdirect service already installed'
