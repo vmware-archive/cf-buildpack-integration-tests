@@ -1,4 +1,16 @@
 require 'machete/matchers/app_staged'
+require 'rspec/core'
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    Machete::RSpecHelpers.check_test_dependencies
+    Machete::Firewall.setup
+  end
+
+  config.after(:suite) do
+    Machete::Firewall.teardown
+  end
+end
 
 module Machete
   module RSpecHelpers
