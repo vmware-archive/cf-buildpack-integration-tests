@@ -26,7 +26,7 @@ RSpec.configure do |config|
   upstream_helper = UpstreamHelper.new
 
   config.before(:suite) do
-    upstream_helper.check_test_dependencies
+    Machete::RSpecHelpers.check_test_dependencies
     Machete::Firewall.setup
   end
 
