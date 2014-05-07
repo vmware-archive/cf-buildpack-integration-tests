@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 $: << './lib'
 require 'bundler/setup'
-require 'scripts_helpers'
+require 'machete'
 
-CloudFoundry.logger.info '----> Enterprise firewall emulation for bosh'
-CloudFoundry.logger.info '----> Enabling firewall'
+Machete::Logger.logger.info '----> Enterprise firewall emulation for bosh'
+Machete::Logger.logger.info '----> Enabling firewall'
 
-save_iptables
+Machete::Firewall.save_iptables
 
-masquerade_dns_only
-open_firewall_for_appdirect
-open_firewall_for_elephantsql
+Machete::Firewall.masquerade_dns_only
+Machete::Firewall.open_firewall_for_appdirect
+Machete::Firewall.open_firewall_for_elephantsql
 

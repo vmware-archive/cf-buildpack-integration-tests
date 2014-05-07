@@ -1,4 +1,4 @@
-require 'scripts_helpers'
+require 'cloud_foundry'
 require 'machete'
 
 class UpstreamHelper
@@ -12,7 +12,7 @@ class UpstreamHelper
   def setup_language_buildpack(language)
     return if has_buildpack?(language)
 
-    Machete::BuildpackUploader.new(language, offline?)
+    Machete::BuildpackUploader.new(language)
 
     mark_buildpack_built(language)
   end
@@ -25,24 +25,6 @@ class UpstreamHelper
     existing_buildpacks[language]
   end
 
-  def buildpack_mode
-    @buildpack_mode ||= get_buildpack_mode
-  end
-
-  def offline?
-    !online?
-  end
-
-  def online?
-    get_buildpack_mode == :online
-  end
-
-  def get_buildpack_mode
-    mode = (ENV['BUILDPACK_MODE'] || :online).downcase.to_sym
-    CloudFoundry.logger.info("BUILDPACK_MODE not specified.\nDefaulting to '#{mode}'") unless ENV['BUILDPACK_MODE']
-    mode
-  end
-
   def check_test_dependencies
     services = `cf services`
 
@@ -52,26 +34,5 @@ class UpstreamHelper
       CloudFoundry.logger.warn(services)
       exit(1)
     end
-  end
-
-  def setup_firewall
-    return unless offline?
-
-    action 'Bringing firewall up, bye bye internet'
-
-    save_iptables
-    masquerade_dns_only
-
-    appdirect_url = URI.parse(ENV['APPDIRECT_URL']).host
-    open_firewall_for_url(appdirect_url)
-    open_firewall_for_url("babar.elephantsql.com")
-  end
-
-  def teardown_firewall
-    return unless offline?
-
-    action 'Taking firewall down, internet is back'
-
-    restore_iptables
   end
 end

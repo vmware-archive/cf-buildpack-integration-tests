@@ -14,7 +14,7 @@ describe 'deploying a firewall test app', :null_buildpack do
   context "an app that accesses the internet" do
     let(:app_name) { "online_app" }
 
-    if CloudFoundry.upstream_helper.offline?
+    if Machete::BuildpackMode.offline?
 
       it "causes an error when trying to access the internet" do
         pending("Waiting on a firewall rule that will reject the packet, not drop it")

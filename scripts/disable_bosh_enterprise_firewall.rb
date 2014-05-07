@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 $: << './lib'
 require 'bundler/setup'
-require 'scripts_helpers'
+require 'machete'
 
-CloudFoundry.logger.info '----> Enterprise firewall emulation for bosh'
-CloudFoundry.logger.info '----> Enabling firewall'
+Machete::Logger.logger.info '----> Enterprise firewall emulation for bosh'
+Machete::Logger.logger.info '----> Enabling firewall'
 
-restore_iptables
+Machete::Firewall.restore_iptables
 

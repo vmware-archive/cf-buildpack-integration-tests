@@ -1,23 +1,24 @@
 #!/usr/bin/env ruby
 $: << './lib'
-require 'scripts_helpers'
+require 'cloud_foundry'
 require 'json'
 require 'pry'
+require 'machete'
 
 # Example usage:
 #   APPDIRECT_USERNAME=$APPDIRECT_USERNAME APPDIRECT_PASSWORD=$APPDIRECT_PASSWORD APPDIRECT_URL=$APPDIRECT_URL ./scripts/prepare_space.rb
 
-action('Logging into CF')
+Machete::Logger.action('Logging into CF')
 warn('* If this times out, check your routing to the CF API')
 
 `cf login -u admin -p admin -o pivotal -s integration`
 
-action('Creating space')
+Machete::Logger.action('Creating space')
 `cf create-org pivotal`
 `cf create-space integration -o pivotal`
 `cf target -o pivotal -s integration`
 
-action('Adding Service Broker')
+Machete::Logger.action('Adding Service Broker')
 
 unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
   CloudFoundry.logger.warn(

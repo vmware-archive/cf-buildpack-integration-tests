@@ -26,11 +26,11 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     CloudFoundry.upstream_helper.check_test_dependencies
-    CloudFoundry.upstream_helper.setup_firewall
+    Machete::Firewall.setup
   end
 
   config.after(:suite) do
-    CloudFoundry.upstream_helper.teardown_firewall
+    Machete::Firewall.teardown
   end
 
   config.before(:each, :null_buildpack) do

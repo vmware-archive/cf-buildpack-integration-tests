@@ -4,14 +4,8 @@ module Machete
 
     def initialize(language, offline = false)
       @language = language
-      @offline = offline
       setup_language_buildpack
     end
-
-    def offline?
-      @offline
-    end
-
 
     def buildpack_root
       return @buildpack_root if @buildpack_root
@@ -51,11 +45,11 @@ module Machete
     end
 
     def buildpack_mode
-      offline? ? "offline" : "online"
+      BuildpackMode.offline? ? "offline" : "online"
     end
 
     def online_string_var
-      if offline?
+      if BuildpackMode.offline?
         ""
       else
         "ONLINE=1"
