@@ -1,3 +1,5 @@
+require 'machete/matchers/app_staged'
+
 module Machete
   module RSpecHelpers
     def self.check_test_dependencies
