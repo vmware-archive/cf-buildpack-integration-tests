@@ -19,7 +19,8 @@ RSpec::Matchers.define :be_staged do | |
   end
 end
 
-Machete.logger = CloudFoundry.logger
+`mkdir -p log`
+Machete.logger = Machete::Logger.new("log/integration.log")
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

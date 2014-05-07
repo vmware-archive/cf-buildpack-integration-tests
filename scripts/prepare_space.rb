@@ -21,7 +21,7 @@ Machete::Logger.action('Creating space')
 Machete::Logger.action('Adding Service Broker')
 
 unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
-  CloudFoundry.logger.warn(
+  Machete.logger.warn(
       'You must provide the APPDIRECT_[USERNAME|PASSWORD|URL] environment variables'
   )
 end
@@ -29,9 +29,9 @@ end
 `cf create-service-broker appdirect #{ENV['APPDIRECT_USERNAME']} #{ENV['APPDIRECT_PASSWORD']} #{ENV['APPDIRECT_URL']}`
 
 if !$?.success?
-  CloudFoundry.logger.info 'appdirect service already installed'
+  Machete.logger.info 'appdirect service already installed'
 else
-  CloudFoundry.logger.info 'appdirect service installed'
+  Machete.logger.info 'appdirect service installed'
 end
 
 raw_services = `cf curl /v2/services?q=label:elephantsql`
@@ -51,6 +51,6 @@ if !free_plan_update['entity']['public']
   exit 1
 end
 
-CloudFoundry.logger.info 'elephantsql free plan is now public'
+Machete.logger.info 'elephantsql free plan is now public'
 
-CloudFoundry.logger.info `cf create-service elephantsql turtle lilelephant`
+Machete.logger.info `cf create-service elephantsql turtle lilelephant`

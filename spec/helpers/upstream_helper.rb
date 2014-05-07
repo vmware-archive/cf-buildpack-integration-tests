@@ -29,9 +29,9 @@ class UpstreamHelper
     services = `cf services`
 
     unless services =~ /^lilelephant/
-      CloudFoundry.logger.warn("Could not find 'lilelephant' service in current cf space")
-      CloudFoundry.logger.warn('Output was: ')
-      CloudFoundry.logger.warn(services)
+      Machete.logger.warn("Could not find 'lilelephant' service in current cf space")
+      Machete.logger.warn('Output was: ')
+      Machete.logger.warn(services)
       exit(1)
     end
   end
