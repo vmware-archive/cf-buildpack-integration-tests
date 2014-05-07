@@ -3,8 +3,8 @@ $: << './lib'
 require 'bundler/setup'
 require 'machete'
 
-Machete::Logger.logger.info '----> Enterprise firewall emulation for bosh'
-Machete::Logger.logger.info '----> Enabling firewall'
+Machete.logger.info '----> Enterprise firewall emulation for bosh'
+Machete.logger.info '----> Enabling firewall'
 
 Machete::Firewall.save_iptables
 

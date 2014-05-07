@@ -5,10 +5,20 @@ require 'machete/buildpack_mode'
 require 'machete/firewall'
 
 module Machete
-  def self.deploy_app(app_name, language, options={}, &block)
-    app = Machete::App.new(app_name, language, options)
-    app.push()
-    block.call(app)
+  class << self
+    def deploy_app(app_name, language, options={}, &block)
+      app = Machete::App.new(app_name, language, options)
+      app.push()
+      block.call(app)
+    end
+
+    def logger
+      @logger ||= Machete::Logger.new(STDOUT)
+    end
+
+    def logger=(new_logger)
+      @logger = new_logger
+    end
   end
 end
 

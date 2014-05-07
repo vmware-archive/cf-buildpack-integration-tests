@@ -1,4 +1,4 @@
-require 'logger'
+require 'machete'
 
 module CloudFoundry
   def self.upstream_helper
@@ -8,7 +8,7 @@ module CloudFoundry
   def self.logger
     return @logger if @logger
     `mkdir -p log`
-    @logger = Logger.new("log/integration.log")
+    @logger = Machete::Logger.new("log/integration.log")
   end
 end
 

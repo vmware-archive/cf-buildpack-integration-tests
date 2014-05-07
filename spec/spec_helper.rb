@@ -19,7 +19,7 @@ RSpec::Matchers.define :be_staged do | |
   end
 end
 
-Machete::Logger.logger = CloudFoundry.logger
+Machete.logger = CloudFoundry.logger
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

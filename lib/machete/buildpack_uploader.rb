@@ -11,14 +11,14 @@ module Machete
       return @buildpack_root if @buildpack_root
 
       @buildpack_root = ENV['BUILDPACK_ROOT'] || "../buildpacks"
-      Machete::Logger.logger.info("BUILDPACK_ROOT not specified.\nDefaulting to '#{@buildpack_root}'") unless ENV['BUILDPACK_ROOT']
+      Machete.logger.info("BUILDPACK_ROOT not specified.\nDefaulting to '#{@buildpack_root}'") unless ENV['BUILDPACK_ROOT']
       @buildpack_root
     end
 
     private
 
     def setup_language_buildpack
-      Machete::Logger.action("Installing buildpack for: #{language} in #{buildpack_mode} mode")
+      Machete.logger.action("Installing buildpack for: #{language} in #{buildpack_mode} mode")
 
       result = Bundler.with_clean_env do
         if File.exists?("#{File.expand_path("cf-buildpack-#{language}", buildpack_root)}/bin/package")
@@ -27,7 +27,7 @@ module Machete
           package_command = "bundle && #{online_string_var} bundle exec rake package"
         end
 
-        Machete::Logger.logger.info %x(
+        Machete.logger.info %x(
           cd #{File.expand_path("cf-buildpack-#{language}", buildpack_root)} &&
           rm -f #{language}_buildpack.zip &&
           #{package_command} &&
@@ -38,7 +38,7 @@ module Machete
       end
 
       if $? != 0
-        Machete::Logger.logger.warn "Could not create the #{language} test buildpack: \n#{result}"
+        Machete.logger.warn "Could not create the #{language} test buildpack: \n#{result}"
         exit(false)
       end
 

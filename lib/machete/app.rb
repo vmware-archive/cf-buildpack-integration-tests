@@ -34,7 +34,7 @@ module Machete
         end
         @output = run_cmd(command)
 
-        logger.info "Output from command: #{command}\n" +
+        Machete.logger.info "Output from command: #{command}\n" +
                         @output
       end
     end

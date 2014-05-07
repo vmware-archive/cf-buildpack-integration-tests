@@ -89,7 +89,7 @@ module Machete
       def masquerade_dns_only
         Logger.action 'Adding DNS masquerading rule'
         with_vagrant_env do
-          Machete::Logger.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE" 2>&1`
+          Machete.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE" 2>&1`
         end
       end
 
@@ -100,7 +100,7 @@ module Machete
 
       def open_firewall_for_url(url)
         with_vagrant_env do
-          Machete::Logger.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{url} -j MASQUERADE " 2>&1`
+          Machete.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{url} -j MASQUERADE " 2>&1`
         end
       end
     end
