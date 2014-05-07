@@ -5,7 +5,7 @@ module Machete
       def setup
         return unless BuildpackMode.offline?
 
-        Logger.action 'Bringing firewall up, bye bye internet'
+        Machete.logger.action 'Bringing firewall up, bye bye internet'
 
         save_iptables
         masquerade_dns_only
@@ -18,7 +18,7 @@ module Machete
       def teardown
         return unless BuildpackMode.offline?
 
-        Logger.action 'Taking firewall down, internet is back'
+        Machete.logger.action 'Taking firewall down, internet is back'
 
         restore_iptables
       end
@@ -35,7 +35,7 @@ module Machete
           @vagrant_cwd = ENV['VAGRANT_CWD']
         else
           @vagrant_cwd = "#{ENV['HOME']}/workspace/bosh-lite/"
-          Logger.action "No VAGRANT_CWD, using default: #{ENV['VAGRANT_CWD']}"
+          Machete.logger.action "No VAGRANT_CWD, using default: #{ENV['VAGRANT_CWD']}"
         end
       end
 
@@ -69,14 +69,14 @@ module Machete
       end
 
       def save_iptables
-        Logger.action "Saving iptables to #{iptables_file}"
+        Machete.logger.action "Saving iptables to #{iptables_file}"
         with_vagrant_env do
           `vagrant ssh -c "sudo iptables-save > #{iptables_file}" 2>&1`
         end
       end
 
       def restore_iptables
-        Logger.action "Restoring iptables from #{iptables_file}"
+        Machete.logger.action "Restoring iptables from #{iptables_file}"
         with_vagrant_env do
           `vagrant ssh -c "sudo iptables-restore #{iptables_file}" 2>&1`
         end
@@ -87,7 +87,7 @@ module Machete
       end
 
       def masquerade_dns_only
-        Logger.action 'Adding DNS masquerading rule'
+        Machete.logger.action 'Adding DNS masquerading rule'
         with_vagrant_env do
           Machete.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE" 2>&1`
         end
