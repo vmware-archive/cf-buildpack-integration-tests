@@ -7,17 +7,26 @@ require 'machete'
 # Example usage:
 #   APPDIRECT_USERNAME=$APPDIRECT_USERNAME APPDIRECT_PASSWORD=$APPDIRECT_PASSWORD APPDIRECT_URL=$APPDIRECT_URL ./scripts/prepare_space.rb
 
-Machete::Logger.action('Logging into CF')
+Machete.logger.action('Logging into CF')
 warn('* If this times out, check your routing to the CF API')
+
+
+if ENV['CF_API']
+  Machete.logger.info("Setting CF API target to #{ENV['CF_API']}")
+  `cf api #{ENV['CF_API']} --skip-ssl-validation`
+else
+  Machete.logger.info("CF API target is:")
+  Machete.logger.info(`cf api`)
+end
 
 `cf login -u admin -p admin -o pivotal -s integration`
 
-Machete::Logger.action('Creating space')
+Machete.logger.action('Creating space')
 `cf create-org pivotal`
 `cf create-space integration -o pivotal`
 `cf target -o pivotal -s integration`
 
-Machete::Logger.action('Adding Service Broker')
+Machete.logger.action('Adding Service Broker')
 
 unless ENV['APPDIRECT_USERNAME'] && ENV['APPDIRECT_PASSWORD'] && ENV['APPDIRECT_URL']
   Machete.logger.warn(
