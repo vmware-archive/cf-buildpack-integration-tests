@@ -1,4 +1,3 @@
-require 'cloud_foundry'
 require 'machete'
 
 class UpstreamHelper

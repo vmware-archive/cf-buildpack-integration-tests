@@ -5,7 +5,6 @@ $: << File.expand_path("..", __FILE__)
 $: << File.expand_path("../../lib", __FILE__)
 
 require 'machete'
-require 'cloud_foundry'
 require 'helpers/upstream_helper'
 
 RSpec::Matchers.define :be_staged do | |
@@ -24,9 +23,10 @@ Machete.logger = Machete::Logger.new("log/integration.log")
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
+  upstream_helper = UpstreamHelper.new
 
   config.before(:suite) do
-    CloudFoundry.upstream_helper.check_test_dependencies
+    upstream_helper.check_test_dependencies
     Machete::Firewall.setup
   end
 
@@ -35,23 +35,23 @@ RSpec.configure do |config|
   end
 
   config.before(:each, :null_buildpack) do
-    CloudFoundry.upstream_helper.setup_language_buildpack :null
+    upstream_helper.setup_language_buildpack :null
   end
 
   config.before(:each, :ruby_buildpack) do
-    CloudFoundry.upstream_helper.setup_language_buildpack :ruby
+    upstream_helper.setup_language_buildpack :ruby
   end
 
   config.before(:each, :go_buildpack) do
-    CloudFoundry.upstream_helper.setup_language_buildpack :go
+    upstream_helper.setup_language_buildpack :go
   end
 
   config.before(:each, :node_buildpack) do
-    CloudFoundry.upstream_helper.setup_language_buildpack :nodejs
+    upstream_helper.setup_language_buildpack :nodejs
   end
 
   config.before(:each, :python_buildpack) do
-    CloudFoundry.upstream_helper.setup_language_buildpack :python
+    upstream_helper.setup_language_buildpack :python
   end
 
   config.before(:each) do

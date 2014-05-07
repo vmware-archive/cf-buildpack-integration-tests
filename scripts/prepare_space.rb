@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 $: << './lib'
-require 'cloud_foundry'
 require 'json'
 require 'pry'
 require 'machete'
