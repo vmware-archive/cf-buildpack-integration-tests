@@ -16,8 +16,9 @@ if `uname` == "Darwin"
   puts `sudo route delete -net 10.244.0.0/19 192.168.50.4 > /dev/null 2>&1`
   puts `sudo route add -net 10.244.0.0/19 192.168.50.4`
 else
-  Machete.logger.action "Setting GoCD route to Bosh Lite"
-  `sudo route add -net 10.244.0.0/19 gw 10.10.48.64`
+  # this environment is CI - waiting to see if anything needs to happen here.
+  # Machete.logger.action "Setting GoCD route to Bosh Lite"
+  # `sudo route add -net 10.244.0.0/19 gw 10.10.48.64`
 end
 
 Machete.logger.info("Setting CF API target")
