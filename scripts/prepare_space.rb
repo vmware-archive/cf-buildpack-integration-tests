@@ -20,9 +20,6 @@ else
   `sudo route add -net 10.244.0.0/19 gw 10.10.48.64`
 end
 
-puts 'ROUTES: '
-puts `sudo route`
-
 Machete.logger.info("Setting CF API target")
 puts `cf api api.10.244.0.34.xip.io --skip-ssl-validation`
 
