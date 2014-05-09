@@ -25,7 +25,7 @@ module Machete
 
       def dns_addr
         @dns_addr ||=
-          with_vagrant_env { `vagrant ssh -c "sudo ip -f inet addr" 2>&1 | grep eth0 | grep inet`.split(" ")[1].gsub(/\d+\/\d+$/, "0/24") }
+          with_vagrant_env { `vagrant ssh -c "sudo ip -f inet addr 2>&1 | grep eth0 | grep inet"` }.split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
       end
 
       def vagrant_cwd
