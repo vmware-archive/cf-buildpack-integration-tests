@@ -11,7 +11,7 @@ Machete.logger.action('Logging into CF')
 warn('* If this times out, check your routing to the CF API')
 
 
-if `uname` == "Darwin"
+if `uname`.strip == "Darwin"
   Machete.logger.action "Setting local Mac route to Bosh Lite"
   puts `sudo route delete -net 10.244.0.0/19 192.168.50.4 > /dev/null 2>&1`
   puts `sudo route add -net 10.244.0.0/19 192.168.50.4`
