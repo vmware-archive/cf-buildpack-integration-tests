@@ -24,8 +24,7 @@ module Machete
       end
 
       def dns_addr
-        @dns_addr ||=
-          with_vagrant_env { `vagrant ssh -c "sudo ip -f inet addr 2>&1 | grep eth0 | grep inet"` }.split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
+        @dns_addr ||= run_on_host("sudo ip -f inet addr | grep eth0 | grep inet").split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
       end
 
       def vagrant_cwd
@@ -42,6 +41,10 @@ module Machete
       def set_vagrant_working_directory
         # this is local to the clean env - thats why it seems strange that we set it often.
         ENV['VAGRANT_CWD'] = vagrant_cwd
+      end
+
+      def run_on_host(command)
+        with_vagrant_env { `vagrant ssh -c "#{command}" 2>&1` }
       end
 
       def with_vagrant_env
@@ -61,16 +64,12 @@ module Machete
 
       def save_iptables
         Machete.logger.action "Saving iptables to #{iptables_file}"
-        with_vagrant_env do
-          `vagrant ssh -c "sudo iptables-save > #{iptables_file}" 2>&1`
-        end
+        run_on_host("sudo iptables-save > #{iptables_file}")
       end
 
       def restore_iptables
         Machete.logger.action "Restoring iptables from #{iptables_file}"
-        with_vagrant_env do
-          `vagrant ssh -c "sudo iptables-restore #{iptables_file}" 2>&1`
-        end
+        run_on_host("sudo iptables-restore #{iptables_file}")
       end
 
       def iptables_file
@@ -79,20 +78,16 @@ module Machete
 
       def masquerade_dns_only
         Machete.logger.action 'Adding DNS masquerading rule'
-        with_vagrant_env do
-          Machete.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE" 2>&1`
-        end
+        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE")
       end
 
       def open_firewall_for_appdirect
         host = URI.parse(ENV['APPDIRECT_URL']).host
-        `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{host} -j MASQUERADE " 2>&1`
+        run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{host} -j MASQUERADE ")
       end
 
       def open_firewall_for_url(url)
-        with_vagrant_env do
-          Machete.logger.info `vagrant ssh -c "sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{url} -j MASQUERADE " 2>&1`
-        end
+        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{url} -j MASQUERADE ")
       end
     end
   end
