@@ -3,7 +3,7 @@
 echo
 echo "******* CI ***************************************************"
 echo "******* Set vagrant root on CI machine - needed by firewall scripts"
-export VAGRANT_CWD=/Users/pivotal/workspace/bosh-lite
+export VAGRANT_CWD=/Users/pivotal/workspace/bosh-lite  # FIXME
 
 echo
 echo "******* CI ***************************************************"

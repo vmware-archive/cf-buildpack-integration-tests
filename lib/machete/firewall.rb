@@ -28,7 +28,7 @@ module Machete
           with_vagrant_env { `vagrant ssh -c "sudo ip -f inet addr" 2>&1 | grep eth0 | grep inet`.split(" ")[1].gsub(/\d+\/\d+$/, "0/24") }
       end
 
-      def vagrant_cwd
+      def vagrant_cwd  # FIXME
         return @vagrant_cwd if @vagrant_cwd
 
         if ENV['VAGRANT_CWD']
