@@ -30,14 +30,14 @@ module Machete
         return unless BuildpackMode.offline?
 
         Machete.logger.action 'Bringing firewall up, bye bye internet'
-        enable_firewall
+        Machete::Firewall.enable_firewall
       end
 
       def teardown
         return unless BuildpackMode.offline?
 
         Machete.logger.action 'Taking firewall down, internet is back'
-        disable_firewall
+        Machete::Firewall.disable_firewall
       end
     end
   end
