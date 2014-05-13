@@ -6,7 +6,7 @@ module Machete
       end
 
       def enable_firewall
-        save_iptables
+        save_iptables || restore_iptables
 
         remove_internet_bound_masquerade_rules
 
@@ -102,9 +102,11 @@ module Machete
         run_on_host("test -f #{iptables_file}")
         if $?.exitstatus == 0
           Machete.logger.info "Found existing #{iptables_file}"
+          return false
         else
           Machete.logger.action "saving iptables to #{iptables_file}"
           run_on_host("sudo iptables-save > #{iptables_file}")
+          return true
         end
       end
 
