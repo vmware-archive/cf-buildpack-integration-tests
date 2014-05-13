@@ -26,7 +26,9 @@ module Machete
 
         if vendor_gems_before_push
           Machete.logger.action('Vendoring gems before push')
-          Machete.logger.info run_cmd('bundle package')
+          Bundler.with_clean_env do
+            run_cmd('bundle package --all')
+          end
         end
 
         run_cmd("cf delete -f #{app_name}")

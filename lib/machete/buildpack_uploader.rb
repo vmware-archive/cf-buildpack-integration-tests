@@ -14,7 +14,7 @@ module Machete
     def setup_language_buildpack
       Machete.logger.action("Installing buildpack for: #{language} in #{buildpack_mode} mode")
 
-      result = Bundler.with_clean_env do
+      Bundler.with_clean_env do
         if File.exists?("#{location}/bin/package")
           package_command = "./bin/package #{buildpack_mode}"
         else
@@ -32,7 +32,7 @@ module Machete
       end
 
       if $? != 0
-        Machete.logger.warn "Could not create the #{language} test buildpack: \n#{result}"
+        Machete.logger.warn "Could not create the #{language} test buildpack"
         exit(false)
       end
 
