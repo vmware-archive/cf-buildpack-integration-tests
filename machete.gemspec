@@ -6,10 +6,10 @@ require 'machete/version'
 Gem::Specification.new do |spec|
   spec.name          = "machete"
   spec.version       = Machete::VERSION
-  spec.authors       = ["Jordi Noguera and Rasheed Abdul-Aziz"]
+  spec.authors       = ["Jordi Noguera and Rasheed Abdul-Aziz and Aaron Triantafyllidis"]
   spec.email         = ["pair+jordi+squeedee@pivotallabs.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Machete is the offline buildpack library for Cloud Foundry Buildpacks}
+  spec.description   = %q{Machete is the offline buildpack library for Cloud Foundry Buildpacks}
   spec.homepage      = ""
   spec.license       = "MIT"
 
