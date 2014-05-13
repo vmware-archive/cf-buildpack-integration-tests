@@ -1,18 +1,12 @@
 module Machete
   module Firewall
-
+    # FIXME: this block belongs in rspec helpers
     class << self
       def setup
         return unless BuildpackMode.offline?
 
         Machete.logger.action 'Bringing firewall up, bye bye internet'
-
-        save_iptables
-        masquerade_dns_only
-
-        appdirect_url = URI.parse(ENV['APPDIRECT_URL']).host
-        open_firewall_for_url(appdirect_url)
-        open_firewall_for_url("babar.elephantsql.com")
+        enable_firewall
       end
 
       def teardown
@@ -20,7 +14,57 @@ module Machete
 
         Machete.logger.action 'Taking firewall down, internet is back'
 
+        disable_firewall
+      end
+    end
+
+    class << self
+      def disable_firewall
         restore_iptables
+      end
+
+      def enable_firewall
+        save_iptables
+
+        remove_internet_bound_masquerade_rules
+
+        masquerade_to_dns
+
+        appdirect_url = URI.parse(ENV['APPDIRECT_URL']).host
+        masquerade_to(appdirect_url)
+
+        masquerade_to("babar.elephantsql.com")
+      end
+
+      def raw_warden_postrouting_rules
+        output = with_vagrant_env do
+          `vagrant ssh -c "sudo iptables -t nat -L warden-postrouting -v -n --line-numbers" 2>&1`.split("\n")
+        end
+
+        chains = output.drop 1
+        keys = chains.shift.split(/\s+/).map { |key| key.to_sym }
+
+        chains.map do |rule|
+          key_values = keys.zip(rule.split(/\s+/))
+          Hash[key_values]
+        end
+      end
+
+      def remove_internet_bound_masquerade_rules
+        raw_rules = raw_warden_postrouting_rules
+        default_rules = select_default_masquerade_rules(raw_rules)
+
+        if default_rules.empty?
+          Machete.logger.error 'No default masquerading rules to remove'
+          exit(1)
+        elsif default_rules.length > 1
+          Machete.logger.error 'Too many default masquerading rules to remove'
+          Machete.logger.info default_rules.map { |rule| rule.to_s }.join("\n")
+          exit(1)
+        else
+          remove_command = "sudo iptables -t nat -D warden-postrouting #{default_rules.first[:num]}"
+          run_on_host(remove_command)
+        end
       end
 
       def dns_addr
@@ -73,8 +117,13 @@ module Machete
       end
 
       def save_iptables
-        Machete.logger.action "Saving iptables to #{iptables_file}"
-        run_on_host("sudo iptables-save > #{iptables_file}")
+        run_on_host("test -f #{iptables_file}")
+        if $?.exitstatus == 0
+          Machete.logger.info "Found existing #{iptables_file}"
+        else
+          Machete.logger.action "saving iptables to #{iptables_file}"
+          run_on_host("sudo iptables-save > #{iptables_file}")
+        end
       end
 
       def restore_iptables
@@ -83,21 +132,16 @@ module Machete
       end
 
       def iptables_file
-        "/tmp/iptables_for_integration_spec.ipt"
+        "/tmp/machete_iptables.ipt"
       end
 
-      def masquerade_dns_only
-        Machete.logger.action 'Adding DNS masquerading rule'
-        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{dns_addr} -j MASQUERADE")
+      def masquerade_to_dns
+        masquerade_to(dns_addr)
       end
 
-      def open_firewall_for_appdirect
-        host = URI.parse(ENV['APPDIRECT_URL']).host
-        run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{host} -j MASQUERADE ")
-      end
-
-      def open_firewall_for_url(url)
-        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{url} -j MASQUERADE ")
+      def masquerade_to(destination)
+        Machete.logger.action "Adding masquerading rule for destination: #{destination}"
+        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{destination} -j MASQUERADE ")
       end
     end
   end

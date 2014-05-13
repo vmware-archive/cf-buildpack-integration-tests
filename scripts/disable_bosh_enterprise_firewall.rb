@@ -4,7 +4,7 @@ require 'bundler/setup'
 require 'machete'
 
 Machete.logger.info '----> Enterprise firewall emulation for bosh'
-Machete.logger.info '----> Enabling firewall'
+Machete.logger.info '----> Disabling firewall'
 
-Machete::Firewall.restore_iptables
+Machete::Firewall.disable_firewall
 
