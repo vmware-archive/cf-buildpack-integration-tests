@@ -3,7 +3,6 @@ require 'rspec/core'
 
 RSpec.configure do |config|
   config.before(:suite) do
-    Machete::RSpecHelpers.check_test_dependencies
     Machete::RSpecHelpers.setup
   end
 
@@ -15,17 +14,6 @@ end
 module Machete
   module RSpecHelpers
     class << self
-      def check_test_dependencies
-        services = `cf services`
-
-        unless services =~ /^lilelephant/
-          Machete.logger.warn("Could not find 'lilelephant' service in current cf space")
-          Machete.logger.warn('Output was: ')
-          Machete.logger.warn(services)
-          exit(1)
-        end
-      end
-
       def setup
         return unless BuildpackMode.offline?
 

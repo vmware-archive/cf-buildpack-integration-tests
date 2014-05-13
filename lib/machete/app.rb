@@ -16,6 +16,8 @@ module Machete
       @with_pg = opts.fetch(:with_pg, false)
       @manifest = opts.fetch(:manifest, nil)
       @vendor_gems_before_push = opts.fetch(:vendor_gems_before_push, false)
+
+      test_dependencies
     end
 
     def push()
@@ -32,7 +34,7 @@ module Machete
         end
 
         run_cmd("cf delete -f #{app_name}")
-        if @with_pg
+        if with_pg?
           command = "cf push #{app_name} -b #{buildpack_name}"
           command += " -c '#{@cmd}'" if @cmd
           run_cmd("#{command} --no-start")
@@ -45,7 +47,7 @@ module Machete
         @output = run_cmd(command)
 
         Machete.logger.info "Output from command: #{command}\n" +
-                        @output
+          @output
       end
     end
 
@@ -77,7 +79,26 @@ module Machete
       run_cmd("cf logs #{app_name} --recent")
     end
 
+    def with_pg?
+      @with_pg
+    end
+
     private
+
+    def test_dependencies
+      test_services_exist if with_pg?
+    end
+
+    def test_services_exist
+      services = `cf services`
+
+      unless services =~ /^lilelephant/
+        Machete.logger.warn("Could not find 'lilelephant' service in current cf space")
+        Machete.logger.warn('Output was: ')
+        Machete.logger.warn(services)
+        exit(1)
+      end
+    end
 
     def buildpack_name
       "#{@language}-test-buildpack"
