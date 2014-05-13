@@ -1,23 +1,5 @@
 module Machete
   module Firewall
-    # FIXME: this block belongs in rspec helpers
-    class << self
-      def setup
-        return unless BuildpackMode.offline?
-
-        Machete.logger.action 'Bringing firewall up, bye bye internet'
-        enable_firewall
-      end
-
-      def teardown
-        return unless BuildpackMode.offline?
-
-        Machete.logger.action 'Taking firewall down, internet is back'
-
-        disable_firewall
-      end
-    end
-
     class << self
       def disable_firewall
         restore_iptables

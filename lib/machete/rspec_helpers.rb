@@ -4,26 +4,41 @@ require 'rspec/core'
 RSpec.configure do |config|
   config.before(:suite) do
     Machete::RSpecHelpers.check_test_dependencies
-    Machete::Firewall.setup
+    Machete::RSpecHelpers.setup
   end
 
   config.after(:suite) do
-    Machete::Firewall.teardown
+    Machete::RSpecHelpers.teardown
   end
 end
 
 module Machete
   module RSpecHelpers
-    def self.check_test_dependencies
-      services = `cf services`
+    class << self
+      def check_test_dependencies
+        services = `cf services`
 
-      unless services =~ /^lilelephant/
-        Machete.logger.warn("Could not find 'lilelephant' service in current cf space")
-        Machete.logger.warn('Output was: ')
-        Machete.logger.warn(services)
-        exit(1)
+        unless services =~ /^lilelephant/
+          Machete.logger.warn("Could not find 'lilelephant' service in current cf space")
+          Machete.logger.warn('Output was: ')
+          Machete.logger.warn(services)
+          exit(1)
+        end
+      end
+
+      def setup
+        return unless BuildpackMode.offline?
+
+        Machete.logger.action 'Bringing firewall up, bye bye internet'
+        enable_firewall
+      end
+
+      def teardown
+        return unless BuildpackMode.offline?
+
+        Machete.logger.action 'Taking firewall down, internet is back'
+        disable_firewall
       end
     end
-
   end
 end

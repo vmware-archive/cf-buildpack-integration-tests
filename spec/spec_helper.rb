@@ -14,7 +14,7 @@ RSpec::Matchers.define :be_staged do | |
 
   failure_message_for_should do |app|
     "App is not staged. Logs are:\n" +
-        app.logs
+      app.logs
   end
 end
 
@@ -25,15 +25,6 @@ RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   upstream_helper = UpstreamHelper.new
 
-  config.before(:suite) do
-    Machete::RSpecHelpers.check_test_dependencies
-    Machete::Firewall.setup
-  end
-
-  config.after(:suite) do
-    Machete::Firewall.teardown
-  end
-
   config.before(:each, :null_buildpack) do
     upstream_helper.setup_language_buildpack :null
   end
@@ -42,23 +33,4 @@ RSpec.configure do |config|
     upstream_helper.setup_language_buildpack :ruby
   end
 
-  config.before(:each, :go_buildpack) do
-    upstream_helper.setup_language_buildpack :go
-  end
-
-  config.before(:each, :node_buildpack) do
-    upstream_helper.setup_language_buildpack :nodejs
-  end
-
-  config.before(:each, :python_buildpack) do
-    upstream_helper.setup_language_buildpack :python
-  end
-
-  config.before(:each) do
-    @pwd = Dir.pwd
-  end
-
-  config.after(:each) do
-    Dir.chdir @pwd
-  end
 end
