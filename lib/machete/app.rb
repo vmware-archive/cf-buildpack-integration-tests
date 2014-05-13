@@ -7,7 +7,7 @@ module Machete
   class App
     include SystemHelper
 
-    attr_reader :output, :app_name, :manifest
+    attr_reader :output, :app_name, :manifest, :vendor_gems_before_push
 
     def initialize(app_name, language, opts={})
       @app_name = app_name
@@ -15,6 +15,7 @@ module Machete
       @cmd = opts.fetch(:cmd, '')
       @with_pg = opts.fetch(:with_pg, false)
       @manifest = opts.fetch(:manifest, nil)
+      @vendor_gems_before_push = opts.fetch(:vendor_gems_before_push, false)
     end
 
     def push()
@@ -22,6 +23,11 @@ module Machete
 
       Dir.chdir("#{fixtures_dir}/#{app_name}") do
         generate_manifest
+
+        if vendor_gems_before_push
+          Machete.logger.action('Vendoring gems before push')
+          Machete.logger.info run_cmd('bundle package')
+        end
 
         run_cmd("cf delete -f #{app_name}")
         if @with_pg
