@@ -6,7 +6,6 @@ describe "Bugs", :ruby_buildpack do
       Machete.deploy_app("mri_187_nokogiri", :ruby) do |app|
         expect(app).to be_staged
         expect(app.output).to match("Installing nokogiri")
-        expect(app.output).to match("Your bundle is complete!")
       end
     end
   end

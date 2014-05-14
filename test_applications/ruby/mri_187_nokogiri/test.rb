@@ -1,3 +1,6 @@
+require 'sinatra'
 require 'nokogiri'
 
-sleep(1000)
+get '/' do
+  'Hello world!'
+end
