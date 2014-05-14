@@ -44,13 +44,11 @@ cf target -o pivotal
 cf create-space integration
 cf target -o pivotal -s integration
 
-
 # ----- run
-
 echo
 echo "******* CI ***************************************************"
-echo "******* Running offline specs"
-BUILDPACK_MODE=offline rspec -f d cf_spec
+echo "******* Running online specs"
+bundle exec rspec -f d cf_spec
 
 if [ $? -ne 0 ]; then
   exit 1
@@ -58,8 +56,8 @@ fi
 
 echo
 echo "******* CI ***************************************************"
-echo "******* Running online specs"
-bundle exec rspec -f d cf_spec
+echo "******* Running offline specs"
+BUILDPACK_MODE=offline rspec -f d cf_spec
 
 if [ $? -ne 0 ]; then
   exit 1
