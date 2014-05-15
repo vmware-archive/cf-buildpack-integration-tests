@@ -5,6 +5,7 @@ rvm use 1.9.3
 
 cd ~/workspace/cf-release
 bundle
+./update
 rm -f dev_releases/*.yml
 bundle exec bosh create release
 
@@ -14,13 +15,8 @@ vagrant up --provider vmware_fusion
 bundle exec bosh target 192.168.50.4
 bundle exec bosh login admin admin
 scripts/add-route
-vagrant ssh -c "sudo sv restart director"
+wget http://bosh-jenkins-gems-warden.s3.amazonaws.com/stemcells/latest-bosh-stemcell-warden.tgz
 bundle exec bosh upload stemcell latest-bosh-stemcell-warden.tgz
-
-cd ~/workspace/cf-release
-./update
-
-cd ~/workspace/bosh-lite
 ./scripts/make_manifest_spiff
 
 cd ~/workspace/cf-release
