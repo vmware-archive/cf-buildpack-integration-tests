@@ -92,9 +92,13 @@ module Machete
       def select_default_masquerade_rules(rules)
         rules.select do |rule|
           rule[:target] == 'MASQUERADE' &&
-            rule[:source] == '10.244.0.0/19' &&
-            rule[:destination] == '!10.244.0.0/19'
+            rule[:source] == bosh_network &&
+            rule[:destination] == "!#{bosh_network}"
         end
+      end
+
+      def bosh_network
+        '10.245.0.0/19'
       end
 
       def save_iptables
@@ -124,7 +128,7 @@ module Machete
 
       def masquerade_to(destination)
         Machete.logger.action "Adding masquerading rule for destination: #{destination}"
-        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s 10.244.0.0/19 -d #{destination} -j MASQUERADE ")
+        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s #{bosh_network} -d #{destination} -j MASQUERADE ")
       end
     end
   end
