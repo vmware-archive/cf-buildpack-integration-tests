@@ -59,8 +59,7 @@ module Machete
         if ENV['VAGRANT_CWD']
           @vagrant_cwd = ENV['VAGRANT_CWD']
         else
-          @vagrant_cwd = "#{ENV['HOME']}/workspace/bosh-lite/"
-          Machete.logger.action "No VAGRANT_CWD, using default: #{ENV['VAGRANT_CWD']}"
+          Machete.logger.error "No VAGRANT_CWD. You probably want:\nVAGRANT_CWD=$HOME/workspace/bosh-lite\nor\nVAGRANT_CWD=$HOME/workspace/bosh-lite-2nd-instance"
         end
       end
 
