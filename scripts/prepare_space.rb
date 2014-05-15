@@ -4,6 +4,9 @@ require 'json'
 require 'pry'
 require 'machete'
 
+api_target = ARGV[0] || "api.10.244.0.34.xip.io"
+Machete.logger.info("Setting environment for #{api_target}")
+
 # Example usage:
 #   APPDIRECT_USERNAME=$APPDIRECT_USERNAME APPDIRECT_PASSWORD=$APPDIRECT_PASSWORD APPDIRECT_URL=$APPDIRECT_URL ./scripts/prepare_space.rb
 
@@ -11,18 +14,8 @@ Machete.logger.action('Logging into CF')
 warn('* If this times out, check your routing to the CF API')
 
 
-if `uname`.strip == "Darwin"
-  Machete.logger.action "Setting local Mac route to Bosh Lite"
-  puts `sudo route delete -net 10.244.0.0/19 192.168.50.4 > /dev/null 2>&1`
-  puts `sudo route add -net 10.244.0.0/19 192.168.50.4`
-else
-  # this environment is CI - waiting to see if anything needs to happen here.
-  # Machete.logger.action "Setting GoCD route to Bosh Lite"
-  # `sudo route add -net 10.244.0.0/19 gw 10.10.48.64`
-end
-
 Machete.logger.info("Setting CF API target")
-puts `cf api api.10.244.0.34.xip.io --skip-ssl-validation`
+puts `cf api #{api_target} --skip-ssl-validation`
 
 puts `cf login -u admin -p admin -o pivotal -s integration`
 
