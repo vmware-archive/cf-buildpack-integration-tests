@@ -20,10 +20,17 @@ module Machete
       test_dependencies
     end
 
-    def push()
+    def directory_for_app
       fixtures_dir = Dir.exists?("cf_spec") ? "cf_spec/fixtures" : "test_applications/#{@language}"
+      if @language == :go
+        "#{fixtures_dir}/#{app_name}/src/#{app_name}"
+      else
+        "#{fixtures_dir}/#{app_name}"
+      end
+    end
 
-      Dir.chdir("#{fixtures_dir}/#{app_name}") do
+    def push()
+      Dir.chdir(directory_for_app) do
         generate_manifest
 
         if vendor_gems_before_push
