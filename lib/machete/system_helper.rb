@@ -1,6 +1,5 @@
 module Machete
   module SystemHelper
-
     def run_cmd(cmd)
       Machete.logger.info "$ #{cmd}"
       result = `#{cmd}`
@@ -23,7 +22,13 @@ module Machete
       ENV['VAGRANT_CWD'] = vagrant_cwd
     end
 
-    def run_on_host(command)
+    def run_on_warden(vm_name, command)
+      bosh_command = "bosh ssh #{vm_name} -- \"#{command}\""
+      puts bosh_command
+      Bundler.with_clean_env { `#{bosh_command}` }
+    end
+
+    def run_on_root_vm(command)
       if in_gocd?
         `ssh -i /var/vcap/jobs/gocd_agent/id_rsa_bosh_lite ubuntu@10.10.48.64 -c "#{command}" 2>&1`
       else
@@ -43,6 +48,5 @@ module Machete
         yield
       end
     end
-
   end
 end

@@ -50,12 +50,12 @@ module Machete
           exit(1)
         else
           remove_command = "sudo iptables -t nat -D warden-postrouting #{default_rules.first[:num]}"
-          run_on_host(remove_command)
+          run_on_root_vm(remove_command)
         end
       end
 
       def dns_addr
-        @dns_addr ||= run_on_host("sudo ip -f inet addr | grep eth0 | grep inet").split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
+        @dns_addr ||= run_on_root_vm("sudo ip -f inet addr | grep eth0 | grep inet").split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
       end
 
       def select_default_masquerade_rules(rules)
@@ -71,20 +71,20 @@ module Machete
       end
 
       def save_iptables
-        run_on_host("test -f #{iptables_file}")
+        run_on_root_vm("test -f #{iptables_file}")
         if $?.exitstatus == 0
           Machete.logger.info "Found existing #{iptables_file}"
           return false
         else
           Machete.logger.action "saving iptables to #{iptables_file}"
-          run_on_host("sudo iptables-save > #{iptables_file}")
+          run_on_root_vm("sudo iptables-save > #{iptables_file}")
           return true
         end
       end
 
       def restore_iptables
         Machete.logger.action "Restoring iptables from #{iptables_file}"
-        run_on_host("sudo iptables-restore #{iptables_file}")
+        run_on_root_vm("sudo iptables-restore #{iptables_file}")
       end
 
       def iptables_file
@@ -97,7 +97,7 @@ module Machete
 
       def masquerade_to(destination)
         Machete.logger.action "Adding masquerading rule for destination: #{destination}"
-        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s #{bosh_network} -d #{destination} -j MASQUERADE ")
+        Machete.logger.info run_on_root_vm("sudo iptables -t nat -A warden-postrouting -s #{bosh_network} -d #{destination} -j MASQUERADE ")
       end
     end
   end
