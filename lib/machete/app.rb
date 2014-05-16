@@ -118,13 +118,5 @@ module Machete
         manifest_file.write @manifest.to_yaml
       end
     end
-
-    def app_path
-      if @language == :go
-        "test_applications/go/src/#{app_name}"
-      else
-        "test_applications/#{@language}/#{app_name}"
-      end
-    end
   end
 end
