@@ -2,7 +2,7 @@
 
 set -e
 
-language=$(echo $(basename `pwd`) | rev | cut -d- -f1 | rev)
+language=$(echo $(basename `git config --get remote.origin.url`) | rev | cut -d- -f1 | rev)
 echo "Packaging online buildpack for $language"
 
 # Build online package
