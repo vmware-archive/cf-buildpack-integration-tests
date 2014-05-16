@@ -2,6 +2,9 @@
 
 set -e
 
+language=$(echo $(basename `pwd`) | rev | cut -d- -f1 | rev)
+echo "Packaging online buildpack for $language"
+
 # Build online package
 rm -f ${language}_buildpack.zip
 ./bin/package online
