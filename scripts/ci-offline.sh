@@ -5,7 +5,7 @@ set -e
 # Build offline package
 ./bin/package offline
 
-# Creat buildpack on CF
+# Create buildpack on CF
 cf api api.10.245.0.34.xip.io
 cf login -u admin -p admin -o pivotal -s integration
 cf create-buildpack $language-test-buildpack $language_buildpack.zip 1 --enable
