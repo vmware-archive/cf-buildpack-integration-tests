@@ -33,10 +33,10 @@ module Machete
       Dir.chdir(directory_for_app) do
         generate_manifest
 
-        if vendor_gems_before_push
-          Machete.logger.action('Vendoring gems before push')
+        if File.exists?("package.sh")
+          Machete.logger.action('Vendoring dependencies before push')
           Bundler.with_clean_env do
-            run_cmd('bundle package --all')
+            run_cmd('./package.sh')
           end
         end
 
