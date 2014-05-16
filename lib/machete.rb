@@ -3,7 +3,6 @@ require 'machete/app'
 require 'machete/buildpack_uploader'
 require 'machete/buildpack_mode'
 require 'machete/firewall'
-require 'machete/rspec_helpers'
 
 module Machete
   class << self

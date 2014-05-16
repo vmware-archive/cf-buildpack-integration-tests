@@ -29,8 +29,32 @@ RSpec.configure do |config|
     upstream_helper.setup_language_buildpack :null
   end
 
-  config.before(:each, :ruby_buildpack) do
-    upstream_helper.setup_language_buildpack :ruby
+end
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    Machete::RSpecHelpers.setup
   end
 
+  config.after(:suite) do
+    Machete::RSpecHelpers.teardown
+  end
+end
+
+module RSpecHelpers
+  class << self
+    def setup
+      return unless BuildpackMode.offline?
+
+      Machete.logger.action 'Bringing firewall up, bye bye internet'
+      Machete::Firewall.enable_firewall
+    end
+
+    def teardown
+      return unless BuildpackMode.offline?
+
+      Machete.logger.action 'Taking firewall down, internet is back'
+      Machete::Firewall.disable_firewall
+    end
+  end
 end
