@@ -3,6 +3,7 @@
 set -e
 
 # Build offline package
+rm -f ${language}_buildpack.zip
 ./bin/package offline
 
 # Create buildpack on CF

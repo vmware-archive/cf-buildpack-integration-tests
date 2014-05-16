@@ -3,6 +3,7 @@
 set -e
 
 # Build online package
+rm -f ${language}_buildpack.zip
 ./bin/package online
 
 # Create buildpack on CF
