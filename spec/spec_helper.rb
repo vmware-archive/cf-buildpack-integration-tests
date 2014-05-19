@@ -33,11 +33,11 @@ end
 
 RSpec.configure do |config|
   config.before(:suite) do
-    Machete::RSpecHelpers.setup
+    RSpecHelpers.setup
   end
 
   config.after(:suite) do
-    Machete::RSpecHelpers.teardown
+    RSpecHelpers.teardown
   end
 end
 
