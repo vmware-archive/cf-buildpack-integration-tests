@@ -2,6 +2,8 @@
 
 set -e
 
+buildpack_location=/tmp/buildpacks
+
 language=$(echo $(basename `git config --get remote.origin.url`) | rev | cut -d- -f1 | rev)
 echo "Packaging online buildpack for $language"
 
@@ -24,4 +26,5 @@ BUNDLE_GEMFILE=cf.Gemfile bundle
 BUNDLE_GEMFILE=cf.Gemfile rspec cf_spec
 
 # Release buildpack
-mv ${language}_buildpack.zip /tmp/${language}_buildpack_${BUILD_NUMBER}_online.zip
+mkdir -p ${buildpack_location}/${language}
+mv ${language}_buildpack.zip ${buildpack_location}/${language}/${language}_buildpack_${BUILD_NUMBER}_online.zip
