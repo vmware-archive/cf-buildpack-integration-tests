@@ -27,4 +27,4 @@ BUNDLE_GEMFILE=cf.Gemfile BUILDPACK_MODE=offline rspec cf_spec
 
 # Release buildpack
 mkdir -p ${buildpack_location}/${language}
-mv ${language}_buildpack.zip ${buildpack_location}/${language}/${language}_buildpack_${BUILD_NUMBER}_offline.zip
+mv ${language}_buildpack.zip ${buildpack_location}/${language}/${language}-buildpack-offline-b${BUILD_NUMBER}.zip
