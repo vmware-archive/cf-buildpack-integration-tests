@@ -16,8 +16,6 @@ module Machete
       @with_pg = opts.fetch(:with_pg, false)
       @manifest = opts.fetch(:manifest, nil)
       @vendor_gems_before_push = opts.fetch(:vendor_gems_before_push, false)
-
-      test_dependencies
     end
 
     def directory_for_app
@@ -45,7 +43,7 @@ module Machete
           command = "cf push #{app_name} -b #{buildpack_name}"
           command += " -c '#{@cmd}'" if @cmd
           run_cmd("#{command} --no-start")
-          run_cmd("cf bind-service #{app_name} lilelephant")
+          run_cmd("cf set-env #{app_name} DATABASE_URL #{database_url}")
           run_cmd(command)
         else
           command = "cf push #{app_name} -b #{buildpack_name}"
@@ -92,19 +90,16 @@ module Machete
 
     private
 
-    def test_dependencies
-      test_services_exist if with_pg?
+    def database_url
+      "postgres://buildpacks:buildpacks@#{postgres_ip}:5524/buildpacks"
     end
 
-    def test_services_exist
-      services = `cf services`
+    def postgres_ip
+      ha_proxy_ip.gsub(/\d+\z/, "30")
+    end
 
-      unless services =~ /^lilelephant/
-        Machete.logger.warn("Could not find 'lilelephant' service in current cf space")
-        Machete.logger.warn('Output was: ')
-        Machete.logger.warn(services)
-        exit(1)
-      end
+    def ha_proxy_ip
+      @ha_proxy ||= `cf api`.scan(/api\.(\d+\.\d+\.\d+\.\d+)\.xip\.io/).flatten.first
     end
 
     def buildpack_name
