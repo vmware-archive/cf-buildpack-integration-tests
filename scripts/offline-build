@@ -4,7 +4,7 @@ set -e
 
 buildpack_location=/tmp/buildpacks
 
-language=$(echo $(basename `git config --get remote.origin.url`) | rev | cut -d- -f1 | rev)
+language=$(echo $(basename `git config --get remote.origin.url`) | rev | cut -d- -f1 | rev | cut -d. -f1)
 echo "Packaging offline buildpack for $language"
 
 # Build offline package
