@@ -44,14 +44,14 @@ end
 module RSpecHelpers
   class << self
     def setup
-      return unless BuildpackMode.offline?
+      return unless Machete::BuildpackMode.offline?
 
       Machete.logger.action 'Bringing firewall up, bye bye internet'
       Machete::Firewall.enable_firewall
     end
 
     def teardown
-      return unless BuildpackMode.offline?
+      return unless Machete::BuildpackMode.offline?
 
       Machete.logger.action 'Taking firewall down, internet is back'
       Machete::Firewall.disable_firewall
