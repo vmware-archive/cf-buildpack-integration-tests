@@ -23,7 +23,7 @@ rvm use default
 
 # Run specs
 BUNDLE_GEMFILE=cf.Gemfile bundle
-BUNDLE_GEMFILE=cf.Gemfile BUILDPACK_MODE=offline rspec cf_spec
+BUNDLE_GEMFILE=cf.Gemfile BUILDPACK_MODE=offline rspec --pattern "{integration,unit}/*_spec.rb" cf_spec
 
 # Release buildpack
 mkdir -p ${buildpack_location}/${language}

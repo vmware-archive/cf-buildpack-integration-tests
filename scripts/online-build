@@ -23,7 +23,7 @@ rvm use default
 
 # Run specs
 BUNDLE_GEMFILE=cf.Gemfile bundle
-BUNDLE_GEMFILE=cf.Gemfile rspec cf_spec
+BUNDLE_GEMFILE=cf.Gemfile rspec --pattern "{integration,unit}/*_spec.rb" cf_spec
 
 # Release buildpack
 mkdir -p ${buildpack_location}/${language}
