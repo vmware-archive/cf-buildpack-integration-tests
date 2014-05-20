@@ -16,11 +16,6 @@ module Machete
         remove_internet_bound_masquerade_rules
 
         masquerade_to_dns
-
-        appdirect_url = URI.parse(ENV['APPDIRECT_URL']).host
-        masquerade_to(appdirect_url)
-
-        masquerade_to("babar.elephantsql.com")
       end
 
       def raw_warden_postrouting_rules
@@ -92,12 +87,8 @@ module Machete
       end
 
       def masquerade_to_dns
-        masquerade_to(dns_addr)
-      end
-
-      def masquerade_to(destination)
-        Machete.logger.action "Adding masquerading rule for destination: #{destination}"
-        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s #{bosh_network} -d #{destination} -j MASQUERADE ")
+        Machete.logger.action "Adding masquerading rule for destination: #{dns_addr}"
+        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s #{bosh_network} -d #{dns_addr} -j MASQUERADE ")
       end
     end
   end
