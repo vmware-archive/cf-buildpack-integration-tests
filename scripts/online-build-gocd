@@ -1,0 +1,24 @@
+#!/bin/bash -l
+
+set -e
+
+language=$(echo $(basename `git config --get remote.origin.url`) | rev | cut -d- -f1 | rev | cut -d. -f1)
+echo "Packaging online buildpack for $language"
+
+# Build online package
+rm -f ${language}_buildpack.zip
+./bin/package online
+
+# Create buildpack on CF
+cf api .... --skip-ssl-validation
+cf login -u admin -p admin -o pivotal -s integration
+cf delete-buildpack ${language}-test-buildpack -f
+cf create-buildpack ${language}-test-buildpack ${language}_buildpack.zip 1 --enable
+
+# Run specs
+BUNDLE_GEMFILE=cf.Gemfile bundle
+BUNDLE_GEMFILE=cf.Gemfile rspec --pattern "{integration,unit}/*_spec.rb" cf_spec
+
+# Release buildpack
+# gocd has a different var for BUILD_NUMBER
+mv ${language}_buildpack.zip ${language}-online-buildpack-b${BUILD_NUMBER}.zip
