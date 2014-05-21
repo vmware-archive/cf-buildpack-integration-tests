@@ -3,6 +3,8 @@
 source "$HOME/.rvm/scripts/rvm"
 rvm use 1.9.3
 
+scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 cd ~/workspace/cf-release
 bundle
 ./update
@@ -23,5 +25,8 @@ cd ~/workspace/cf-release
 bundle exec bosh upload release dev_releases/cf-*.yml
 
 cd ~/workspace/bosh-lite
+sed -i '' -e 's/bosh-warden-boshlite-ubuntu$/bosh-warden-boshlite-ubuntu-lucid-go_agent/g' manifests/cf-manifest.yml
 bundle exec bosh deployment manifests/cf-manifest.yml
 bundle exec bosh -n deploy
+
+$scripts_dir/online_api
