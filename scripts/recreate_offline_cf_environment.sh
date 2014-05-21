@@ -3,8 +3,9 @@
 source "$HOME/.rvm/scripts/rvm"
 rvm use 1.9.3
 
+scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 bosh_lite_path=~/workspace/bosh-lite-2nd-instance
-script_path=`pwd`
 
 cd ~/workspace/cf-release
 bundle
@@ -27,9 +28,13 @@ cd ~/workspace/cf-release
 bundle exec bosh upload release dev_releases/cf-*.yml
 
 cd $bosh_lite_path
+sed -i '' -e 's/bosh-warden-boshlite-ubuntu$/bosh-warden-boshlite-ubuntu-lucid-go_agent/g' manifests/cf-manifest.yml
 bundle exec bosh deployment manifests/cf-manifest.yml
 bundle exec bosh -n deploy
 
-cd $script_path
-VAGRANT_CWD=$bosh_lite_path ./enable_bosh_enterprise_firewall.rb
+$scripts_dir/add-routes
+$scripts_dir/offline_api
+$scripts_dir/setup_databases
 
+#cd $scripts_dir/..
+#VAGRANT_CWD=$bosh_lite_path bundle exec ./scripts/enable_bosh_enterprise_firewall.rb
