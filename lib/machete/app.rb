@@ -39,16 +39,16 @@ module Machete
         end
 
         run_cmd("cf delete -f #{app_name}")
+
+        command = "cf push #{app_name}"
+        command += " -c '#{@cmd}'" if @cmd
+
         if with_pg?
-          command = "cf push #{app_name} -b #{buildpack_name}"
-          command += " -c '#{@cmd}'" if @cmd
           run_cmd("#{command} --no-start")
           run_cmd("cf set-env #{app_name} DATABASE_URL #{database_url}")
           run_cmd(command)
-        else
-          command = "cf push #{app_name} -b #{buildpack_name}"
-          command += " -c '#{@cmd}'" if @cmd
         end
+
         @output = run_cmd(command)
 
         Machete.logger.info "Output from command: #{command}\n" +
@@ -100,10 +100,6 @@ module Machete
 
     def ha_proxy_ip
       @ha_proxy ||= `cf api`.scan(/api\.(\d+\.\d+\.\d+\.\d+)\.xip\.io/).flatten.first
-    end
-
-    def buildpack_name
-      "#{@language}-test-buildpack"
     end
 
     def generate_manifest

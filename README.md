@@ -1,5 +1,9 @@
 # Cloud Foundry Ruby Buildpack Integration Tests
 
+## Machete
+
+Machete is the CF buildpack test framework.
+
 ## Options
 
 Online and offline mode (default: online):
