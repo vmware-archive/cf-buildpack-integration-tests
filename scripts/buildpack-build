@@ -24,9 +24,9 @@ echo "******* Packaging $mode buildpack for $language"
 
 echo
 echo "******* CI ***************************************************"
-echo "******* Build $1 package"
+echo "******* Build $mode package"
 rm -f ${language}_buildpack.zip
-./bin/package $1
+./bin/package $mode
 
 echo
 echo "******* CI ***************************************************"
