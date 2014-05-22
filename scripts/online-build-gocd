@@ -2,6 +2,9 @@
 
 set -e
 
+chruby 2.0.0-p451
+
+
 #eval `ssh-agent`
 #cp /var/vcap/jobs/gocd_agent/id_rsa_bosh_lite ../id_rsa_bosh_lite
 #chmod 0600 ../id_rsa_bosh_lite
