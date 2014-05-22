@@ -9,9 +9,16 @@ echo "Packaging online buildpack for $language"
 rm -f ${language}_buildpack.zip
 ./bin/package online
 
-# Create buildpack on CF
-cf api .... --skip-ssl-validation
-cf login -u admin -p admin -o pivotal -s integration
+# Log in to CF
+cf api api.10.244.0.34.xip.io --skip-ssl-validation
+cf login -u admin -p admin 
+
+# create and use org/space
+cf create-org pivotal
+cf create-space integration -o pivotal
+cf target -o pivotal -s integration
+
+# clear and reupload buildpack
 cf delete-buildpack ${language}-test-buildpack -f
 cf create-buildpack ${language}-test-buildpack ${language}_buildpack.zip 1 --enable
 
