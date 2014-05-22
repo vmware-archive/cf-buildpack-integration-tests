@@ -1,0 +1,4 @@
+#!/bin/bash -l
+
+BUNDLE_GEMFILE=cf.Gemfile bundle
+BUNDLE_GEMFILE=cf.Gemfile BUILDPACK_MODE=$1 rspec --pattern "{integration,unit}/*_spec.rb" cf_spec

@@ -1,0 +1,6 @@
+#!/bin/bash -l
+
+scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+online_api
+$scripts_dir/run-tests online
