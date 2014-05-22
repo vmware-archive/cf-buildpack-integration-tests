@@ -2,6 +2,7 @@
 
 source "$HOME/.rvm/scripts/rvm"
 rvm use 1.9.3
+bundle
 
 scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -32,5 +33,4 @@ $scripts_dir/add-routes
 $scripts_dir/offline_api
 $scripts_dir/setup_databases
 
-#cd $scripts_dir/..
-#VAGRANT_CWD=$bosh_lite_path bundle exec ./scripts/enable_bosh_enterprise_firewall.rb
+VAGRANT_CWD=$bosh_lite_path bundle exec $scripts_dir/enable_bosh_enterprise_firewall.rb
