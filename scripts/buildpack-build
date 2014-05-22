@@ -45,7 +45,7 @@ rvm use default
 echo
 echo "******* CI ***************************************************"
 echo "******* Run specs"
-BUNDLE_GEMFILE=cf.Gemfile bundle
+BUNDLE_GEMFILE=cf.Gemfile bundle --no-cache
 BUNDLE_GEMFILE=cf.Gemfile BUILDPACK_MODE=$mode rspec --pattern "{integration,unit}/*_spec.rb" cf_spec
 
 echo
