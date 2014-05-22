@@ -1,11 +1,8 @@
 #!/bin/bash --login
 
 source "$HOME/.rvm/scripts/rvm"
-rvm use 1.9.3
-bundle
 
 scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
 bosh_lite_path=~/workspace/bosh-lite-2nd-instance
 
 cd ~/workspace/cf-release
@@ -15,6 +12,7 @@ rm -f dev_releases/*.yml
 bundle exec bosh create release
 
 cd $bosh_lite_path
+bundle
 vagrant destroy -f
 vagrant up --provider vmware_fusion
 bundle exec bosh target 192.168.100.4
@@ -33,4 +31,6 @@ $scripts_dir/add-routes
 $scripts_dir/offline_api
 $scripts_dir/setup_databases
 
+cd $scripts_dir/..
+bundle
 VAGRANT_CWD=$bosh_lite_path bundle exec $scripts_dir/enable_bosh_enterprise_firewall.rb
