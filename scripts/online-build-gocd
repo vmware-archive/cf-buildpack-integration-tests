@@ -3,7 +3,9 @@
 set -e
 
 eval `ssh-agent`
-ssh-add /var/vcap/jobs/gocd_agent/id_rsa_bosh_lite
+cp /var/vcap/jobs/gocd_agent/id_rsa_bosh_lite ../id_rsa_bosh_lite
+chmod 0600 ../id_rsa_bosh_lite
+ssh-add ../id_rsa_bosh_lite
 
 sudo ../sshuttle/sshuttle -D -v -r ubuntu@10.10.48.64 10.244.0.0/19
 
