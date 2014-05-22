@@ -2,6 +2,8 @@
 
 set -e
 
+echo env
+
 sudo ../sshuttle/sshuttle -D -v -r ubuntu@10.10.48.64 10.244.0.0/19
 
 language=$(echo $(basename `git config --get remote.origin.url`) | rev | cut -d- -f1 | rev | cut -d. -f1)
