@@ -6,11 +6,11 @@ mode=$1
 
 if [ $# -eq 0 ] || ([ "$mode" != "online" ] && [ "$mode" != "offline" ]); then
   echo "Usage:"
-  echo "  ./build [online|offline]"
+  echo "  ./buildpack-build [online|offline]"
   exit 1
 fi
 
-if [ "$mode" != "online" ]; then
+if [ "$mode" == "online" ]; then
   api=api.10.244.0.34.xip.io
 else
   api=api.10.245.0.34.xip.io
