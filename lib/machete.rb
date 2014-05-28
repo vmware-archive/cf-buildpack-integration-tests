@@ -6,9 +6,9 @@ require 'machete/firewall'
 
 module Machete
   class << self
-    def deploy_app(app_name, language, options={}, &block)
-      app = Machete::App.new(app_name, language, options)
-      app.push()
+    def deploy_app(app_path, options={}, &block)
+      app = Machete::App.new(app_path, options)
+      app.push
       block.call(app)
     end
 

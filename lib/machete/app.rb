@@ -9,9 +9,9 @@ module Machete
 
     attr_reader :output, :app_name, :manifest, :vendor_gems_before_push
 
-    def initialize(app_name, language, opts={})
-      @app_name = app_name
-      @language = language
+    def initialize(app_path, opts={})
+      @app_name = app_path.split("/").last
+      @app_path = app_path
       @cmd = opts.fetch(:cmd, '')
       @with_pg = opts.fetch(:with_pg, false)
       @manifest = opts.fetch(:manifest, nil)
@@ -19,12 +19,7 @@ module Machete
     end
 
     def directory_for_app
-      fixtures_dir = Dir.exists?("cf_spec") ? "cf_spec/fixtures" : "test_applications/#{@language}"
-      if @language == :go
-        "#{fixtures_dir}/#{app_name}/src/#{app_name}"
-      else
-        "#{fixtures_dir}/#{app_name}"
-      end
+      "cf_spec/fixtures/#{@app_path}"
     end
 
     def push()
