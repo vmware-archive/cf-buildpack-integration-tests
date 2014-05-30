@@ -63,6 +63,11 @@ module Machete
       run_cmd("cf app #{app_name} | grep url").split(' ').last
     end
 
+    def has_file? filename
+      run_cmd("cf files #{app_name} #{filename}")
+      $?.exitstatus == 0
+    end
+
     def staged?
       raw_spaces = run_cmd('cf curl /v2/spaces')
       spaces = JSON.parse(raw_spaces)
