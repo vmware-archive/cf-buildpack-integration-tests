@@ -1,6 +1,40 @@
 require 'machete/system_helper'
 
 module Machete
+  class FilterChain
+
+    include Machete::SystemHelper
+    extend Machete::SystemHelper
+
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
+
+    def append(rule)
+      with_vagrant_env do
+        `vagrant ssh -c "sudo iptables -t filter -A #{name} #{rule} 2>&1"`
+      end
+    end
+
+    def insert(position, rule)
+      with_vagrant_env do
+        `vagrant ssh -c "sudo iptables -t filter -I #{name} #{position} #{rule} 2>&1"`
+      end
+    end
+
+
+    def self.create(name)
+      with_vagrant_env do
+        `vagrant ssh -c "sudo iptables -t filter -N #{name} 2>&1"`
+      end
+      self.new(name)
+    end
+
+  end
+
+
   module Firewall
 
     extend Machete::SystemHelper
@@ -13,56 +47,50 @@ module Machete
       def enable_firewall
         save_iptables || restore_iptables
 
-        remove_internet_bound_masquerade_rules
-
-        masquerade_to_dns
+        add_on_premises_chain
       end
 
-      def raw_warden_postrouting_rules
-        output = with_vagrant_env do
-          `vagrant ssh -c "sudo iptables -t nat -L warden-postrouting -v -n --line-numbers" 2>&1`.split("\n")
-        end
+      def add_on_premises_chain
+        on_premises_chain = FilterChain.create('on-premises-firewall')
+        on_premises_chain.append(return_on_packets_to_dns)
+        on_premises_chain.append(return_on_packets_from_mac)
+        on_premises_chain.append(log_all_packets)
+        on_premises_chain.append(rejects_all_packets)
 
-        chains = output.drop 1
-        keys = chains.shift.split(/\s+/).map { |key| key.to_sym }
-
-        chains.map do |rule|
-          key_values = keys.zip(rule.split(/\s+/))
-          Hash[key_values]
-        end
+        warden_forward_chain = FilterChain.new('warden-forward')
+        warden_forward_chain.insert(2,firewall_packets_not_destined_for_cf_machines)
       end
 
-      def remove_internet_bound_masquerade_rules
-        raw_rules = raw_warden_postrouting_rules
-        default_rules = select_default_masquerade_rules(raw_rules)
+      def return_on_packets_to_dns
+        "-d #{dns_addr} -j RETURN"
+      end
 
-        if default_rules.empty?
-          Machete.logger.error 'No default masquerading rules to remove'
-          exit(1)
-        elsif default_rules.length > 1
-          Machete.logger.error 'Too many default masquerading rules to remove'
-          Machete.logger.info default_rules.map { |rule| rule.to_s }.join("\n")
-          exit(1)
-        else
-          remove_command = "sudo iptables -t nat -D warden-postrouting #{default_rules.first[:num]}"
-          run_on_host(remove_command)
-        end
+      def return_on_packets_from_mac
+        "-d #{mac_subnet} -j RETURN"
+      end
+
+      def log_all_packets
+        '-m limit --limit 5/min -j LOG --log-prefix \"cf-to-internet-traffic: \" --log-level 0'
+      end
+
+      def rejects_all_packets
+        '-j REJECT'
+      end
+
+      def firewall_packets_not_destined_for_cf_machines
+        "! -d #{cf_subnet} -j on-premises-firewall"
+      end
+
+      def cf_subnet
+        '10.245.0.0/19'
+      end
+
+      def mac_subnet
+        '192.168.100.0/24'
       end
 
       def dns_addr
         @dns_addr ||= run_on_host("sudo ip -f inet addr | grep eth0 | grep inet").split(" ")[1].gsub(/\d+\/\d+$/, "0/24")
-      end
-
-      def select_default_masquerade_rules(rules)
-        rules.select do |rule|
-          rule[:target] == 'MASQUERADE' &&
-            rule[:source] == bosh_network &&
-            rule[:destination] == "!#{bosh_network}"
-        end
-      end
-
-      def bosh_network
-        '10.245.0.0/19'
       end
 
       def save_iptables
@@ -86,10 +114,6 @@ module Machete
         "/tmp/machete_iptables.ipt"
       end
 
-      def masquerade_to_dns
-        Machete.logger.action "Adding masquerading rule for destination: #{dns_addr}"
-        Machete.logger.info run_on_host("sudo iptables -t nat -A warden-postrouting -s #{bosh_network} -d #{dns_addr} -j MASQUERADE ")
-      end
     end
   end
 end
