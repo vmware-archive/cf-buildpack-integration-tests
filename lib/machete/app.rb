@@ -59,6 +59,10 @@ module Machete
       HTTParty.get("http://#{url}").body
     end
 
+    def successful_response?
+      HTTParty.get("http://#{url}").code == 200
+    end
+
     def url
       run_cmd("cf app #{app_name} | grep url").split(' ').last
     end
@@ -78,6 +82,10 @@ module Machete
       apps = JSON.parse(raw_apps)
       app = apps['resources'].detect { |resource| resource['entity']['name'] == app_name }
       app['entity']['package_state'] == 'STAGED'
+    end
+
+    def deployed?
+      staged? && successful_response?
     end
 
     def logs
