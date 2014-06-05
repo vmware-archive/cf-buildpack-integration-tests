@@ -1,7 +1,6 @@
 require 'httparty'
 require 'machete/system_helper'
 require 'json'
-require 'pry'
 
 module Machete
   class App

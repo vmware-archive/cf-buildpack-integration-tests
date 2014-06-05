@@ -1,26 +1,20 @@
-# Cloud Foundry Ruby Buildpack Integration Tests
-
-## Machete
+# Machete
 
 Machete is the CF buildpack test framework.
 
-## Options
+# Options
 
 Online and offline mode (default: online):
 
     BUILDPACK_MODE=[online|offline]
 
-Path to buildpacks folder:
-    BUILDPACK_ROOT ../buildpacks
+# Logging
 
-This root needs to contain the following buildpacks:
+Errors in the Machete library log to STDOUT by default. You can change Machete's default log:
 
-* cf-buildpack-go
-* cf-buildpack-ruby
-
-## Logging
-
-Errors in the Machete library (usually shell errors) logged to _./machete.log_
+```RUBY
+  Machete.logger = Machete::Logger.new("log/integration.log")
+```
 
 ## Notes
 
